@@ -67,9 +67,17 @@ function embedUrl(url: string): string | null {
   return null;
 }
 
-function Figure({ caption, children }: { caption: string; children: React.ReactNode }) {
+function Figure({
+  caption,
+  size,
+  children,
+}: {
+  caption: string;
+  size: string;
+  children: React.ReactNode;
+}) {
   return (
-    <figure className="blog-block">
+    <figure className="blog-block" data-size={size}>
       {children}
       {caption ? <figcaption className="blog-caption">{caption}</figcaption> : null}
     </figure>
@@ -86,6 +94,13 @@ const CALLOUT_ICONS: Record<string, typeof Info> = {
 export function BlogBlock({ lang, source }: { lang: BlockLang; source: string }) {
   const { get, body } = useMemo(() => parseBlock(source), [source]);
   const caption = get("caption");
+  const size = get("size", "full");
+  const Figure = (props: { caption: string; children: React.ReactNode }) => (
+    <Frame caption={props.caption} size={size}>
+      {props.children}
+    </Frame>
+  );
+
 
   if (lang === "video") {
     const src = get("url") || get("src") || body;
