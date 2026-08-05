@@ -71,7 +71,7 @@ function PortfolioEditor() {
         if (!alive) return;
         if (error || !data) {
           toast.error("পোর্টফোলিও পাওয়া যায়নি।");
-          navigate({ to: "/admin" });
+          navigate({ to: "/himusadmin" });
           return;
         }
         setRow(data as unknown as PortfolioRow);
@@ -152,7 +152,7 @@ function PortfolioEditor() {
       <div className="mx-auto max-w-3xl space-y-6">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <Button asChild variant="ghost" size="sm">
-            <Link to="/admin">
+            <Link to="/himusadmin">
               <ArrowLeft className="size-4" /> ড্যাশবোর্ড
             </Link>
           </Button>
