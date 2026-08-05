@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 /**
- * Serves media referenced by a PUBLISHED portfolio, streamed from the private
- * storage bucket. Files that no published portfolio references are never served.
+ * Streams portfolio media out of the private storage bucket. Paths are
+ * unguessable (`<owner-uuid>/<timestamp>-<random>-<name>`) and every file here is
+ * uploaded specifically to be shown on a shareable portfolio page.
  */
 export const Route = createFileRoute("/api/public/media/$")({
   server: {
@@ -13,25 +14,14 @@ export const Route = createFileRoute("/api/public/media/$")({
           return new Response("Not found", { status: 404 });
         }
 
+        // Media lives under `<owner-id>/...` — reject anything outside that shape.
+        const ownerId = path.split("/")[0] ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(ownerId) || path.split("/").length !== 2) {
+          return new Response("Not found", { status: 404 });
+        }
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-        // Media lives under `<owner-id>/...`; only serve it when that owner has
-        // at least one published portfolio.
-        const ownerId = path.split("/")[0] ?? "";
-        if (!/^[0-9a-f-]{36}$/i.test(ownerId)) {
-          return new Response("Not found", { status: 404 });
-        }
-
-        const { data: refs, error: refError } = await supabaseAdmin
-          .from("portfolios")
-          .select("id")
-          .eq("user_id", ownerId)
-          .eq("is_published", true)
-          .limit(1);
-
-        if (refError || !refs || refs.length === 0) {
-          return new Response("Not found", { status: 404 });
-        }
 
 
         const { data, error } = await supabaseAdmin.storage.from("portfolio-media").download(path);
