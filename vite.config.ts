@@ -12,16 +12,10 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Cloudflare Pages advanced mode expects the SSR worker inside the uploaded
-  // public directory as `_worker.js`. Keeping the worker under `dist/server`
-  // uploads assets only and makes every route return an empty 404.
+  // Let the Pages preset own the output layout. On Cloudflare it emits
+  // `dist/_worker.js` alongside the public assets for Pages advanced mode.
   nitro: {
     preset: "cloudflare-pages",
-    output: {
-      dir: "dist",
-      publicDir: "dist/client",
-      serverDir: "dist/client/_worker.js",
-    },
   },
 });
 
