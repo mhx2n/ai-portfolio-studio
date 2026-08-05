@@ -1,7 +1,12 @@
 import { access, readdir } from "node:fs/promises";
 import { constants } from "node:fs";
 
-const requiredPaths = ["dist/_worker.js/index.js", "dist/_routes.json"];
+const isLovableSandbox =
+  process.env["LOVABLE_SANDBOX"] === "1" || Boolean(process.env["DEV_SERVER__PROJECT_PATH"]);
+
+const requiredPaths = isLovableSandbox
+  ? ["dist/server/index.mjs", "dist/server/wrangler.json", "dist/client"]
+  : ["dist/_worker.js/index.js", "dist/_routes.json"];
 
 for (const path of requiredPaths) {
   try {
@@ -13,4 +18,6 @@ for (const path of requiredPaths) {
 }
 
 const output = await readdir("dist");
-console.log(`Cloudflare Pages output verified: dist/${output.join(", dist/")}`);
+console.log(
+  `${isLovableSandbox ? "Lovable preview" : "Cloudflare Pages"} output verified: dist/${output.join(", dist/")}`,
+);
