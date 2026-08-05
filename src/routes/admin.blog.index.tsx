@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { ArrowLeft, Copy, ExternalLink, Eye, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { slugify } from "@/lib/portfolio-types";
 import {
   BLOG_ACCENTS,
   BLOG_FONTS,
@@ -272,5 +271,3 @@ function BlogAdmin() {
     </main>
   );
 }
-
-export { slugify };
