@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Eye } from "lucide-react";
+import { Pin } from "lucide-react";
 import { getBlogIndex } from "@/lib/blog.functions";
-import { fontStack, formatDate } from "@/lib/blog-types";
+import { formatDate } from "@/lib/blog-types";
 import type { PublicPostCard } from "@/lib/blog-types";
 import { mediaUrl } from "@/lib/portfolio-types";
+import { JournalShell } from "@/components/blog/JournalShell";
 
 export const Route = createFileRoute("/blog/")({
   loader: () => getBlogIndex(),
@@ -30,147 +31,87 @@ function BlogIndex() {
   const rest = featured ? posts.slice(1) : posts;
 
   return (
-    <main
-      className="min-h-screen px-5 py-10"
-      style={
-        {
-          "--blog-accent": settings.accent,
-          fontFamily: fontStack(settings.font),
-        } as React.CSSProperties
-      }
-    >
-      <div className="mx-auto max-w-3xl">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="size-3.5" /> হোম
-        </Link>
-
-        <header className="mt-6 border-b pb-8">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{settings.title}</h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+    <JournalShell settings={settings}>
+      <main className="px-5">
+        <section className="mx-auto max-w-2xl pb-10 pt-14 text-center sm:pt-20">
+          <p className="journal-serif text-sm italic text-muted-foreground sm:text-base">
+            ~ an editorial corner of the internet ~
+          </p>
+          <h1 className="journal-serif mt-4 text-[3.1rem] leading-[1.02] tracking-tight sm:text-7xl">
+            {settings.title}
+          </h1>
+          <div className="journal-rule">
+            <span />
+          </div>
+          <p className="journal-serif mx-auto max-w-xl text-lg italic leading-relaxed text-muted-foreground sm:text-xl">
             {settings.description}
           </p>
-        </header>
+        </section>
 
-        {posts.length === 0 ? (
-          <p className="mt-10 text-sm text-muted-foreground">এখনো কোনো পোস্ট প্রকাশ করা হয়নি।</p>
-        ) : featured ? (
-          <>
-            <PostFeature post={featured} />
-            <div className="mt-6">
-              <PostList posts={rest} layout="list" />
+        <section className="mx-auto max-w-3xl pb-6">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-4 border-b pb-5">
+            <h2 className="journal-serif truncate text-3xl">Latest entries</h2>
+            <span className="journal-kicker shrink-0">
+              {posts.length} {posts.length === 1 ? "piece" : "pieces"}
+            </span>
+          </div>
+
+          {posts.length === 0 ? (
+            <p className="py-14 text-center text-sm text-muted-foreground">
+              এখনো কোনো পোস্ট প্রকাশ করা হয়নি।
+            </p>
+          ) : (
+            <div className="mt-8 space-y-6">
+              {featured ? <PostCard post={featured} featured /> : null}
+              <div
+                className={
+                  settings.layout === "cards"
+                    ? "grid gap-6 sm:grid-cols-2"
+                    : "space-y-6"
+                }
+              >
+                {rest.map((post: PublicPostCard) => (
+                  <PostCard key={post.slug} post={post} />
+                ))}
+              </div>
             </div>
-          </>
-        ) : (
-          <PostList posts={posts} layout={settings.layout} />
-        )}
-      </div>
-    </main>
+          )}
+        </section>
+      </main>
+    </JournalShell>
   );
 }
 
-type Card = PublicPostCard;
-
-function PostFeature({ post }: { post: Card }) {
+function PostCard({ post, featured }: { post: PublicPostCard; featured?: boolean }) {
   return (
     <Link
       to="/blog/$slug"
       params={{ slug: post.slug }}
-      className="glass mt-8 block overflow-hidden rounded-3xl transition-transform hover:-translate-y-0.5"
+      className="journal-card"
+      style={featured ? { borderColor: "var(--blog-accent)" } : undefined}
     >
       {post.cover_path ? (
         <img
           src={mediaUrl({ path: post.cover_path, name: post.title, mime: "image/*" })}
           alt={post.title}
           loading="lazy"
-          className="h-52 w-full object-cover"
+          decoding="async"
+          className={`w-full object-cover ${featured ? "h-56 sm:h-72" : "h-48"}`}
         />
       ) : null}
-      <div className="p-6">
-        <p className="text-[11px] uppercase tracking-widest text-[color:var(--blog-accent)]">
-          ফিচার্ড
+      <div className="p-5 sm:p-6">
+        <p className="journal-kicker flex items-center gap-2">
+          <Pin className="size-3.5 shrink-0" aria-hidden />
+          {post.tags.length ? post.tags.slice(0, 2).join(" • ") : "journal"}
         </p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight">{post.title}</h2>
+        <h3 className="journal-serif mt-2.5 text-2xl leading-snug sm:text-3xl">{post.title}</h3>
         {post.excerpt ? (
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
+          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+            {post.excerpt}
+          </p>
         ) : null}
-        <Meta post={post} />
+        <p className="journal-kicker mt-3">{formatDate(post.published_at ?? post.updated_at)}</p>
       </div>
     </Link>
-  );
-}
-
-function PostList({ posts, layout }: { posts: Card[]; layout: string }) {
-  if (layout === "cards") {
-    return (
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {posts.map((post) => (
-          <Link
-            key={post.slug}
-            to="/blog/$slug"
-            params={{ slug: post.slug }}
-            className="glass block overflow-hidden rounded-2xl transition-transform hover:-translate-y-0.5"
-          >
-            {post.cover_path ? (
-              <img
-                src={mediaUrl({ path: post.cover_path, name: post.title, mime: "image/*" })}
-                alt={post.title}
-                loading="lazy"
-                className="h-36 w-full object-cover"
-              />
-            ) : null}
-            <div className="p-4">
-              <h2 className="font-semibold tracking-tight">{post.title}</h2>
-              {post.excerpt ? (
-                <p className="mt-1.5 line-clamp-3 text-xs leading-relaxed text-muted-foreground">
-                  {post.excerpt}
-                </p>
-              ) : null}
-              <Meta post={post} />
-            </div>
-          </Link>
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <ul className="mt-4 divide-y">
-      {posts.map((post) => (
-        <li key={post.slug}>
-          <Link
-            to="/blog/$slug"
-            params={{ slug: post.slug }}
-            className="group flex flex-col gap-1 py-5 transition-colors"
-          >
-            <h2 className="text-lg font-semibold tracking-tight group-hover:text-[color:var(--blog-accent)]">
-              {post.title}
-            </h2>
-            {post.excerpt ? (
-              <p className="text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
-            ) : null}
-            <Meta post={post} />
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function Meta({ post }: { post: Card }) {
-  return (
-    <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
-      <span>{formatDate(post.published_at ?? post.updated_at)}</span>
-      <span className="inline-flex items-center gap-1">
-        <Eye className="size-3" /> {post.views}
-      </span>
-      {post.tags.slice(0, 3).map((tag) => (
-        <span key={tag} className="rounded-full bg-secondary px-2 py-0.5">
-          #{tag}
-        </span>
-      ))}
-    </div>
   );
 }

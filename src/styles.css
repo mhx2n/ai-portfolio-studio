@@ -465,3 +465,145 @@
   .blog-cta { transition: none; }
 }
 
+
+/* ============ Editorial journal theme (public blog) ============ */
+.blog-journal {
+  --background: oklch(0.985 0.012 85);
+  --foreground: oklch(0.29 0.055 255);
+  --card: oklch(0.995 0.006 85);
+  --surface: oklch(0.97 0.014 85);
+  --muted: oklch(0.94 0.014 85);
+  --muted-foreground: oklch(0.55 0.03 255);
+  --secondary: oklch(0.95 0.014 85);
+  --secondary-foreground: oklch(0.32 0.05 255);
+  --border: oklch(0.29 0.055 255 / 14%);
+  --primary-foreground: oklch(0.99 0.005 85);
+  --journal-display: "Playfair Display", ui-serif, Georgia, serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  background-image:
+    radial-gradient(120% 60% at 50% 0%, oklch(0.93 0.03 25 / 35%), transparent 70%);
+}
+.blog-journal ::selection {
+  background: color-mix(in oklab, var(--blog-accent, var(--foreground)) 25%, transparent);
+}
+.journal-serif { font-family: var(--journal-display); }
+
+.journal-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklab, var(--background) 86%, transparent);
+  backdrop-filter: blur(14px) saturate(1.1);
+  transform: translateZ(0);
+}
+.journal-brand {
+  font-family: var(--journal-display);
+  font-size: 1.55rem;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--foreground);
+  text-decoration: none;
+}
+.journal-navlink {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+.journal-navlink:hover { color: var(--foreground); }
+
+.journal-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.journal-rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  margin: 1.5rem 0;
+}
+.journal-rule::before,
+.journal-rule::after {
+  content: "";
+  height: 1px;
+  width: 5.5rem;
+  background: var(--border);
+}
+.journal-rule > span {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: var(--blog-accent, oklch(0.78 0.1 70));
+}
+
+.journal-card {
+  display: block;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 1px 2px oklch(0.29 0.055 255 / 5%);
+  transform: translateZ(0);
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease;
+  will-change: transform;
+}
+.journal-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px -22px oklch(0.29 0.055 255 / 35%);
+}
+
+.blog-journal .prose-blog {
+  font-size: 1.02rem;
+  line-height: 1.85;
+}
+.blog-journal .prose-blog h1,
+.blog-journal .prose-blog h2,
+.blog-journal .prose-blog h3 {
+  font-family: var(--journal-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.blog-journal .prose-blog blockquote { font-family: var(--journal-display); }
+.blog-journal .prose-blog th {
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.blog-journal .blog-callout {
+  border-style: dashed;
+  border-left-width: 1px;
+  text-align: center;
+  grid-template-columns: minmax(0, 1fr);
+  border-radius: 1.1rem;
+}
+.blog-journal .blog-callout-icon { margin: 0 auto; }
+.blog-journal .blog-cta {
+  border: 1.5px solid var(--blog-accent, var(--foreground));
+  background: color-mix(in oklab, var(--blog-accent, var(--foreground)) 10%, var(--card));
+  color: var(--foreground);
+  border-radius: 0.85rem;
+  padding: 0.7rem 1.3rem;
+}
+.blog-journal .blog-cta-tg {
+  color: #fff;
+  border-color: transparent;
+}
+@media (prefers-reduced-motion: reduce) {
+  .journal-card { transition: none; }
+}
