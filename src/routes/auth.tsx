@@ -60,7 +60,10 @@ function AuthPage() {
       },
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     if (!data.session) {
       setSentConfirm(true);
       toast.success("ইমেইল দেখুন — কনফার্ম লিংক পাঠানো হয়েছে।");
@@ -74,11 +77,13 @@ function AuthPage() {
     });
     if (result.error) {
       setBusy(false);
-      return toast.error("Google সাইন-ইন ব্যর্থ হয়েছে।");
+      toast.error("Google সাইন-ইন ব্যর্থ হয়েছে।");
+      return;
     }
     if (result.redirected) return;
     navigate({ to: "/admin" });
   }
+
 
   return (
     <main className="grid-glow flex min-h-screen items-center justify-center px-5 py-14">
