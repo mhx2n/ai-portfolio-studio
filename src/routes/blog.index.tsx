@@ -70,7 +70,7 @@ function BlogIndex() {
                     : "space-y-6"
                 }
               >
-                {rest.map((post) => (
+                {rest.map((post: PublicPostCard) => (
                   <PostCard key={post.slug} post={post} />
                 ))}
               </div>
