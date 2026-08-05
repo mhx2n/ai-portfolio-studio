@@ -13,6 +13,7 @@ import { MediaInput } from "@/components/admin/MediaInput";
 import { Markdown } from "@/components/blog/Markdown";
 import { MarkdownToolbar } from "@/components/blog/MarkdownToolbar";
 import { BlockComposer } from "@/components/blog/BlockComposer";
+import { BlockCanvas } from "@/components/blog/BlockCanvas";
 
 export const Route = createFileRoute("/admin/blog/$id")({
   head: () => ({
@@ -36,7 +37,7 @@ function PostEditor() {
   const [post, setPost] = useState<BlogPostRow | null>(null);
   const [saving, setSaving] = useState(false);
   const [aiBusy, setAiBusy] = useState<string | null>(null);
-  const [tab, setTab] = useState<"write" | "preview" | "split">("split");
+  const [tab, setTab] = useState<"arrange" | "write" | "preview" | "split">("arrange");
   const bodyRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
@@ -275,7 +276,7 @@ function PostEditor() {
           <section className="glass rounded-2xl p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex gap-1 rounded-full bg-secondary p-1 text-xs">
-                {(["write", "split", "preview"] as const).map((t) => (
+                {(["arrange", "write", "split", "preview"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
@@ -284,7 +285,7 @@ function PostEditor() {
                       tab === t ? "bg-background font-medium" : "text-muted-foreground"
                     }`}
                   >
-                    {t === "write" ? "লেখা" : t === "split" ? "দুটোই" : "প্রিভিউ"}
+                    {t === "arrange" ? "সাজান" : t === "write" ? "লেখা" : t === "split" ? "দুটোই" : "প্রিভিউ"}
                   </button>
                 ))}
               </div>
@@ -318,9 +319,15 @@ function PostEditor() {
               </div>
             </div>
 
+            {tab === "arrange" ? (
+              <div className="mt-4">
+                <BlockCanvas value={post.body_md} onChange={(next) => patch({ body_md: next })} />
+              </div>
+            ) : null}
+
             {tab !== "preview" ? (
               <div className="mt-3 space-y-3">
-                <MarkdownToolbar onInsert={insertSnippet} />
+                {tab === "arrange" ? null : <MarkdownToolbar onInsert={insertSnippet} />}
                 <div className="rounded-2xl border border-dashed p-3">
                   <p className="mb-2 text-[11px] font-medium text-muted-foreground">
                     সেকশন যোগ করুন — যেটা চান তার + এ চাপ দিন, তথ্য বসিয়ে সেভ করুন
@@ -336,7 +343,7 @@ function PostEditor() {
             <div
               className={`mt-4 grid gap-4 ${tab === "split" ? "lg:grid-cols-2" : "grid-cols-1"}`}
             >
-              {tab !== "preview" ? (
+              {tab === "write" || tab === "split" ? (
                 <textarea
                   ref={bodyRef}
                   value={post.body_md}
@@ -347,7 +354,7 @@ function PostEditor() {
                 />
               ) : null}
 
-              {tab !== "write" ? (
+              {tab === "preview" || tab === "split" ? (
                 <div className="min-h-[60vh] overflow-auto rounded-xl border bg-background p-4">
                   <Markdown>{post.body_md || "_প্রিভিউ এখানে দেখাবে…_"}</Markdown>
                 </div>

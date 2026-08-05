@@ -607,3 +607,17 @@
 @media (prefers-reduced-motion: reduce) {
   .journal-card { transition: none; }
 }
+
+/* Author-chosen block widths (visual canvas "size" control). */
+[data-size="md"] {
+  max-width: 34rem;
+  margin-inline: auto;
+}
+[data-size="sm"] {
+  max-width: 22rem;
+  margin-inline: auto;
+}
+.blog-stats[data-size="sm"],
+.blog-stats[data-size="md"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
