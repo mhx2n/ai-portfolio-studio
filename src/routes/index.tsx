@@ -60,15 +60,9 @@ function Landing() {
             </Link>
             <Link
               to="/auth"
-              className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              লগইন
-            </Link>
-            <Link
-              to="/admin"
               className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
-              অ্যাডমিন প্যানেল
+              লগইন
             </Link>
           </div>
         </nav>
