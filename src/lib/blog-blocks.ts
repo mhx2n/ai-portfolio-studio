@@ -1,0 +1,140 @@
+/** Segment model for the visual block canvas. body_md stays the source of truth. */
+export type BlockSize = "sm" | "md" | "full";
+
+export type CanvasBlock = {
+  /** Stable id for React keys + drag state (not persisted). */
+  uid: string;
+  /** Fence language, or null for plain markdown text. */
+  lang: string | null;
+  /** Raw inner content (fence body, or the markdown text itself). */
+  source: string;
+};
+
+let counter = 0;
+function uid() {
+  counter += 1;
+  return `b${counter}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+export function makeBlock(lang: string | null, source: string): CanvasBlock {
+  return { uid: uid(), lang, source };
+}
+
+/** Splits markdown into fenced custom blocks and text groups. */
+export function parseBlocks(md: string): CanvasBlock[] {
+  const lines = md.replace(/\r/g, "").split("\n");
+  const blocks: CanvasBlock[] = [];
+  let text: string[] = [];
+
+  const flushText = () => {
+    const joined = text.join("\n").trim();
+    if (joined) blocks.push(makeBlock(null, joined));
+    text = [];
+  };
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i] ?? "";
+    const open = /^```([\w-]*)\s*$/.exec(line.trim());
+    if (open) {
+      flushText();
+      const lang = open[1] || "code";
+      const body: string[] = [];
+      i += 1;
+      while (i < lines.length && !/^```\s*$/.test((lines[i] ?? "").trim())) {
+        body.push(lines[i] ?? "");
+        i += 1;
+      }
+      blocks.push(makeBlock(lang, body.join("\n")));
+      continue;
+    }
+    if (!line.trim()) {
+      flushText();
+      continue;
+    }
+    text.push(line);
+  }
+  flushText();
+  return blocks;
+}
+
+/** Renders one block back to markdown. */
+export function blockToMarkdown(block: CanvasBlock) {
+  if (!block.lang) return block.source.trim();
+  return `\`\`\`${block.lang}\n${block.source.replace(/\s+$/, "")}\n\`\`\``;
+}
+
+export function serializeBlocks(blocks: CanvasBlock[]) {
+  return blocks
+    .map(blockToMarkdown)
+    .filter((s) => s.trim())
+    .join("\n\n")
+    .concat("\n");
+}
+
+/** Reads the `size:` meta key of a fenced block. */
+export function readSize(source: string): BlockSize {
+  const match = /^[ \t]*size[ \t]*:[ \t]*(sm|md|full)[ \t]*$/im.exec(source);
+  return (match?.[1] as BlockSize | undefined) ?? "full";
+}
+
+/** Sets/removes the `size:` meta key without touching the rest of the block. */
+export function writeSize(source: string, size: BlockSize) {
+  const stripped = source
+    .replace(/^[ \t]*size[ \t]*:[ \t]*[\w-]*[ \t]*\n?/gim, "")
+    .replace(/^\n+/, "");
+  if (size === "full") return stripped;
+  return `size: ${size}\n${stripped}`;
+}
+
+/** Blocks whose visual width can be changed. */
+export const SIZEABLE_LANGS = [
+  "video",
+  "audio",
+  "embed",
+  "gallery",
+  "stats",
+  "quote",
+  "callout",
+  "info",
+  "button",
+  "telegram",
+];
+
+export function canResize(lang: string | null) {
+  return !!lang && SIZEABLE_LANGS.includes(lang);
+}
+
+const LABELS: Record<string, string> = {
+  video: "ভিডিও",
+  audio: "অডিও",
+  embed: "এমবেড",
+  gallery: "গ্যালারি",
+  stats: "স্ট্যাটস",
+  quote: "কোট",
+  callout: "কলআউট",
+  info: "কলআউট",
+  button: "বাটন",
+  telegram: "টেলিগ্রাম CTA",
+  code: "কোড",
+};
+
+export function blockLabel(block: CanvasBlock) {
+  if (!block.lang) {
+    const first = block.source.split("\n")[0] ?? "";
+    if (/^#{1,6}\s/.test(first)) return "হেডিং";
+    if (/^([-*+]|\d+\.)\s/.test(first)) return "লিস্ট";
+    if (/^\|/.test(first)) return "টেবিল";
+    return "টেক্সট";
+  }
+  return LABELS[block.lang] ?? block.lang;
+}
+
+/** Short preview line for the collapsed card. */
+export function blockSummary(block: CanvasBlock) {
+  const flat = block.source
+    .split("\n")
+    .map((l) => l.replace(/^[a-z_][\w-]*\s*:\s*/i, "").trim())
+    .filter(Boolean)
+    .join(" · ");
+  return flat.slice(0, 90);
+}
