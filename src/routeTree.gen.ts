@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminIdRouteImport } from './routes/admin.$id'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
@@ -30,6 +31,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIdRoute = AdminIdRouteImport.update({
+  id: '/admin/$id',
+  path: '/admin/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PSlugRoute = PSlugRouteImport.update({
   id: '/p/$slug',
   path: '/p/$slug',
@@ -44,6 +50,7 @@ const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin/$id': typeof AdminIdRoute
   '/p/$slug': typeof PSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin/$id': typeof AdminIdRoute
   '/p/$slug': typeof PSlugRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -59,22 +67,37 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin/$id': typeof AdminIdRoute
   '/p/$slug': typeof PSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/p/$slug' | '/admin/' | '/api/public/media/$'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin/$id'
+    | '/p/$slug'
+    | '/admin/'
+    | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/p/$slug' | '/admin' | '/api/public/media/$'
+  to:
+    '/' | '/auth' | '/admin/$id' | '/p/$slug' | '/admin' | '/api/public/media/$'
   id:
-    '__root__' | '/' | '/auth' | '/p/$slug' | '/admin/' | '/api/public/media/$'
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/admin/$id'
+    | '/p/$slug'
+    | '/admin/'
+    | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  AdminIdRoute: typeof AdminIdRoute
   PSlugRoute: typeof PSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
@@ -103,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/$id': {
+      id: '/admin/$id'
+      path: '/admin/$id'
+      fullPath: '/admin/$id'
+      preLoaderRoute: typeof AdminIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/$slug': {
       id: '/p/$slug'
       path: '/p/$slug'
@@ -123,6 +153,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  AdminIdRoute: AdminIdRoute,
   PSlugRoute: PSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
