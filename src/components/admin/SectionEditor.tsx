@@ -28,6 +28,14 @@ export function SectionEditor({ userId, section, onChange, onRemove, onMove }: P
   const setData = (patch: Partial<Section["data"]>) =>
     onChange({ ...section, data: { ...d, ...patch } });
 
+  const setCoord = (key: "lat" | "lng", raw: string) => {
+    const next = { ...d } as Record<string, unknown>;
+    if (raw === "") delete next[key];
+    else next[key] = Number(raw);
+    onChange({ ...section, data: next as Section["data"] });
+  };
+
+
   async function ai(kind: "hero" | "text" | "tagline" | "improve", prompt: string) {
     if (prompt.trim().length < 3) {
       toast.error("AI-কে অন্তত কয়েকটি শব্দ দিন (যেমন: আপনার পেশা)।");
