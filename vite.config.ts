@@ -14,6 +14,9 @@ export default defineConfig({
   },
   // Cloudflare Pages output (dist/client + _worker.js) so the site can be
   // deployed straight from the Pages dashboard.
-  nitro: { preset: "cloudflare-pages" },
+  nitro: {
+    preset: "cloudflare-pages",
+    output: { dir: "dist", serverDir: "dist/server", publicDir: "dist/client" },
+  },
 });
 
