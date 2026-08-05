@@ -59,7 +59,7 @@ const BLOCKS: BlockDef[] = [
       { name: "upload", label: "অথবা ভিডিও আপলোড", kind: "media", accept: "video/*" },
       { name: "caption", label: "ক্যাপশন", kind: "text", placeholder: "লাইভ অ্যাকশন" },
     ],
-    build: (v) => fence("video", { url: v.upload || v.url || "", caption: v.caption ?? "" }),
+    build: (v) => fence("video", { url: v['upload'] || v['url'] || "", caption: v['caption'] ?? "" }),
   },
   {
     id: "audio",
@@ -74,9 +74,9 @@ const BLOCKS: BlockDef[] = [
     ],
     build: (v) =>
       fence("audio", {
-        url: v.upload || v.url || "",
-        title: v.title ?? "",
-        caption: v.caption ?? "",
+        url: v['upload'] || v['url'] || "",
+        title: v['title'] ?? "",
+        caption: v['caption'] ?? "",
       }),
   },
   {
@@ -89,7 +89,7 @@ const BLOCKS: BlockDef[] = [
       { name: "url", label: "অথবা ছবির লিংক", kind: "text", placeholder: "https://…/image.jpg" },
       { name: "caption", label: "ক্যাপশন", kind: "text" },
     ],
-    build: (v) => `\n![${(v.caption ?? "").trim()}](${(v.upload || v.url || "").trim()})\n\n`,
+    build: (v) => `\n![${(v['caption'] ?? "").trim()}](${(v['upload'] || v['url'] || "").trim()})\n\n`,
   },
   {
     id: "gallery",
@@ -110,8 +110,8 @@ const BLOCKS: BlockDef[] = [
     build: (v) =>
       fence(
         "gallery",
-        { caption: v.caption ?? "" },
-        [v.upload ?? "", v.urls ?? ""].filter(Boolean).join("\n"),
+        { caption: v['caption'] ?? "" },
+        [v['upload'] ?? "", v['urls'] ?? ""].filter(Boolean).join("\n"),
       ),
   },
   {
@@ -134,7 +134,7 @@ const BLOCKS: BlockDef[] = [
       { name: "title", label: "শিরোনাম", kind: "text", placeholder: "নোট" },
       { name: "body", label: "লেখা", kind: "textarea", rows: 4 },
     ],
-    build: (v) => fence("callout", { type: v.type || "info", title: v.title ?? "" }, v.body),
+    build: (v) => fence("callout", { type: v['type'] || "info", title: v['title'] ?? "" }, v['body']),
   },
   {
     id: "quote",
@@ -145,7 +145,7 @@ const BLOCKS: BlockDef[] = [
       { name: "body", label: "উদ্ধৃতি", kind: "textarea", rows: 3 },
       { name: "author", label: "লেখক", kind: "text" },
     ],
-    build: (v) => fence("quote", { author: v.author ?? "" }, v.body),
+    build: (v) => fence("quote", { author: v['author'] ?? "" }, v['body']),
   },
   {
     id: "table",
@@ -168,11 +168,11 @@ const BLOCKS: BlockDef[] = [
       },
     ],
     build: (v) => {
-      const headers = (v.headers || "কলাম ১, কলাম ২")
+      const headers = (v['headers'] || "কলাম ১, কলাম ২")
         .split(",")
         .map((h) => h.trim())
         .filter(Boolean);
-      const rows = (v.rows ?? "")
+      const rows = (v['rows'] ?? "")
         .split("\n")
         .map((line) => line.trim())
         .filter(Boolean)
@@ -198,7 +198,7 @@ const BLOCKS: BlockDef[] = [
         placeholder: "ইউজার | ১২K\nআপটাইম | ৯৯.৯%",
       },
     ],
-    build: (v) => fence("stats", {}, v.rows),
+    build: (v) => fence("stats", {}, v['rows']),
   },
   {
     id: "telegram",
@@ -209,7 +209,7 @@ const BLOCKS: BlockDef[] = [
       { name: "id", label: "টেলিগ্রাম আইডি", kind: "text", placeholder: "@username" },
       { name: "label", label: "বাটনের লেখা", kind: "text", placeholder: "Contact via Telegram" },
     ],
-    build: (v) => fence("telegram", { id: v.id ?? "", label: v.label ?? "" }),
+    build: (v) => fence("telegram", { id: v['id'] ?? "", label: v['label'] ?? "" }),
   },
   {
     id: "embed",
@@ -223,9 +223,9 @@ const BLOCKS: BlockDef[] = [
     ],
     build: (v) =>
       fence("embed", {
-        url: v.url ?? "",
-        ratio: v.ratio || "16 / 9",
-        caption: v.caption ?? "",
+        url: v['url'] ?? "",
+        ratio: v['ratio'] || "16 / 9",
+        caption: v['caption'] ?? "",
       }),
   },
 ];
@@ -338,7 +338,7 @@ export function BlockComposer({
                   userId ? (
                     <MediaInput
                       userId={userId}
-                      accept={field.accept}
+                      {...(field.accept ? { accept: field.accept } : {})}
                       multiple={field.multiple ?? false}
                       label="ফাইল বাছুন"
                       value={parsePaths(values[field.name] ?? "")}
