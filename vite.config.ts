@@ -12,4 +12,8 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Cloudflare Pages output (dist/client + _worker.js) so the site can be
+  // deployed straight from the Pages dashboard.
+  nitro: { preset: "cloudflare-pages" },
 });
+
