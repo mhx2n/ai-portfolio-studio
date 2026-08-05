@@ -15,7 +15,7 @@ import { MarkdownToolbar } from "@/components/blog/MarkdownToolbar";
 import { BlockComposer } from "@/components/blog/BlockComposer";
 import { BlockCanvas } from "@/components/blog/BlockCanvas";
 
-export const Route = createFileRoute("/admin/blog/$id")({
+export const Route = createFileRoute("/himusadmin/blog/$id")({
   head: () => ({
     meta: [
       { title: "পোস্ট এডিটর — Folio Studio" },

@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const Route = createFileRoute("/admin/$id")({
+export const Route = createFileRoute("/himusadmin/$id")({
   head: () => ({
     meta: [
       { title: "পোর্টফোলিও এডিটর — Folio Studio" },

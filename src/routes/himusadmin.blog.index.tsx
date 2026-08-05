@@ -14,7 +14,7 @@ import {
 } from "@/lib/blog-types";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/admin/blog/")({
+export const Route = createFileRoute("/himusadmin/blog/")({
   head: () => ({
     meta: [
       { title: "ব্লগ ম্যানেজার — Folio Studio" },
