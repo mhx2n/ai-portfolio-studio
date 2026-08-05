@@ -163,7 +163,7 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
     const Icon = CALLOUT_ICONS[kind] ?? Info;
     const title = get("title");
     return (
-      <aside className={`blog-callout blog-callout-${CALLOUT_ICONS[kind] ? kind : "info"}`}>
+      <aside className={`blog-callout blog-callout-${CALLOUT_ICONS[kind] ? kind : "info"}`} data-size={size}>
         <Icon className="blog-callout-icon" aria-hidden />
         <div>
           {title ? <p className="blog-callout-title">{title}</p> : null}
@@ -176,7 +176,7 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
   if (lang === "quote") {
     const author = get("author");
     return (
-      <blockquote className="blog-quote">
+      <blockquote className="blog-quote" data-size={size}>
         <Quote className="blog-quote-icon" aria-hidden />
         <p>{body || get("text")}</p>
         {author ? <cite>— {author}</cite> : null}
@@ -191,7 +191,7 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
     if (!isSafeHttp(href)) return null;
     const label = get("label") || (isTg ? `@${handle || "telegram"}` : href);
     return (
-      <p className="blog-cta-wrap">
+      <p className="blog-cta-wrap" data-size={size}>
         <a
           className={`blog-cta ${isTg ? "blog-cta-tg" : ""}`}
           href={href}
@@ -234,7 +234,7 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
       .filter((parts) => parts[0]);
     if (!rows.length) return null;
     return (
-      <div className="blog-stats">
+      <div className="blog-stats" data-size={size}>
         {rows.map((parts, i) => (
           <div key={i} className="blog-stat">
             <span className="blog-stat-value">{parts[1] ?? ""}</span>
