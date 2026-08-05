@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, ExternalLink, Loader2, Save, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,7 @@ import { readingMinutes, type BlogPostRow } from "@/lib/blog-types";
 import { Button } from "@/components/ui/button";
 import { MediaInput } from "@/components/admin/MediaInput";
 import { Markdown } from "@/components/blog/Markdown";
+import { MarkdownToolbar } from "@/components/blog/MarkdownToolbar";
 
 export const Route = createFileRoute("/admin/blog/$id")({
   head: () => ({
@@ -35,6 +36,7 @@ function PostEditor() {
   const [saving, setSaving] = useState(false);
   const [aiBusy, setAiBusy] = useState<string | null>(null);
   const [tab, setTab] = useState<"write" | "preview" | "split">("split");
+  const bodyRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -65,6 +67,25 @@ function PostEditor() {
   function patch(next: Partial<BlogPostRow>) {
     setPost((prev) => (prev ? { ...prev, ...next } : prev));
   }
+
+  /** Inserts a markdown snippet at the caret inside the body textarea. */
+  function insertSnippet(text: string) {
+    const el = bodyRef.current;
+    setPost((prev) => {
+      if (!prev) return prev;
+      const start = el?.selectionStart ?? prev.body_md.length;
+      const end = el?.selectionEnd ?? start;
+      const body = prev.body_md.slice(0, start) + text + prev.body_md.slice(end);
+      requestAnimationFrame(() => {
+        if (!el) return;
+        el.focus();
+        const caret = start + text.length;
+        el.setSelectionRange(caret, caret);
+      });
+      return { ...prev, body_md: body };
+    });
+  }
+
 
   async function save(publishOverride?: boolean) {
     if (!post) return;
@@ -296,18 +317,26 @@ function PostEditor() {
               </div>
             </div>
 
+            {tab !== "preview" ? (
+              <div className="mt-3">
+                <MarkdownToolbar onInsert={insertSnippet} />
+              </div>
+            ) : null}
+
             <div
               className={`mt-4 grid gap-4 ${tab === "split" ? "lg:grid-cols-2" : "grid-cols-1"}`}
             >
               {tab !== "preview" ? (
                 <textarea
+                  ref={bodyRef}
                   value={post.body_md}
                   onChange={(e) => patch({ body_md: e.target.value })}
                   spellCheck={false}
                   className="min-h-[60vh] w-full resize-y rounded-xl border bg-background p-4 font-mono text-[13px] leading-relaxed"
-                  placeholder="# হেডিং&#10;&#10;Markdown সাপোর্টেড: **বোল্ড**, `কোড`, লিস্ট, টেবিল, ইমেজ।"
+                  placeholder="# হেডিং&#10;&#10;Markdown সাপোর্টেড: **বোল্ড**, `কোড`, লিস্ট, টেবিল, ইমেজ। উপরের বাটন দিয়ে ভিডিও/অডিও/কলআউট ব্লক যোগ করুন।"
                 />
               ) : null}
+
               {tab !== "write" ? (
                 <div className="min-h-[60vh] overflow-auto rounded-xl border bg-background p-4">
                   <Markdown>{post.body_md || "_প্রিভিউ এখানে দেখাবে…_"}</Markdown>

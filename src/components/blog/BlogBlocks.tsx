@@ -1,0 +1,234 @@
+import { useMemo } from "react";
+import { Info, AlertTriangle, CheckCircle2, Lightbulb, Send, Quote, ExternalLink } from "lucide-react";
+import { mediaUrl } from "@/lib/portfolio-types";
+
+/** Known custom block languages usable as ```name fences inside post markdown. */
+export const BLOG_BLOCK_LANGS = [
+  "video",
+  "audio",
+  "embed",
+  "callout",
+  "quote",
+  "button",
+  "telegram",
+  "gallery",
+  "info",
+  "stats",
+] as const;
+
+export type BlockLang = (typeof BLOG_BLOCK_LANGS)[number];
+
+export function isBlockLang(value: string): value is BlockLang {
+  return (BLOG_BLOCK_LANGS as readonly string[]).includes(value);
+}
+
+/** Parses simple `key: value` lines; everything after a blank line is free text. */
+function parseBlock(raw: string) {
+  const map = new Map<string, string>();
+  const rest: string[] = [];
+  let inBody = false;
+  for (const line of raw.replace(/\r/g, "").split("\n")) {
+    if (inBody) {
+      rest.push(line);
+      continue;
+    }
+    if (!line.trim()) {
+      if (map.size) inBody = true;
+      continue;
+    }
+    const match = /^([a-zA-Z_][\w-]*)\s*:\s*(.*)$/.exec(line.trim());
+    if (match && match[1] !== undefined) map.set(match[1].toLowerCase(), (match[2] ?? "").trim());
+    else {
+      inBody = true;
+      rest.push(line);
+    }
+  }
+  const get = (key: string, fallback = "") => map.get(key) ?? fallback;
+  return { get, body: rest.join("\n").trim() };
+}
+
+function isSafeHttp(url: string) {
+  return /^https?:\/\//i.test(url);
+}
+
+/** Storage paths get proxied; absolute http(s) links pass through. */
+function resolveSrc(value: string) {
+  if (!value) return "";
+  if (isSafeHttp(value)) return value;
+  if (value.startsWith("/")) return value;
+  return mediaUrl({ path: value, name: "media", mime: "application/octet-stream" });
+}
+
+function embedUrl(url: string): string | null {
+  const yt = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/i.exec(url);
+  if (yt?.[1]) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
+  const vimeo = /vimeo\.com\/(?:video\/)?(\d+)/i.exec(url);
+  if (vimeo?.[1]) return `https://player.vimeo.com/video/${vimeo[1]}`;
+  return null;
+}
+
+function Figure({ caption, children }: { caption: string; children: React.ReactNode }) {
+  return (
+    <figure className="blog-block">
+      {children}
+      {caption ? <figcaption className="blog-caption">{caption}</figcaption> : null}
+    </figure>
+  );
+}
+
+const CALLOUT_ICONS: Record<string, typeof Info> = {
+  info: Info,
+  tip: Lightbulb,
+  success: CheckCircle2,
+  warn: AlertTriangle,
+};
+
+export function BlogBlock({ lang, source }: { lang: BlockLang; source: string }) {
+  const { get, body } = useMemo(() => parseBlock(source), [source]);
+  const caption = get("caption");
+
+  if (lang === "video") {
+    const src = get("url") || get("src") || body;
+    if (!src) return null;
+    const iframe = isSafeHttp(src) ? embedUrl(src) : null;
+    const poster = get("poster");
+    return (
+      <Figure caption={caption}>
+        <div className="blog-frame">
+          {iframe ? (
+            <iframe
+              src={iframe}
+              title={caption || "video"}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <video
+              src={resolveSrc(src)}
+              controls
+              playsInline
+              preload="metadata"
+              {...(poster ? { poster: resolveSrc(poster) } : {})}
+            />
+          )}
+        </div>
+      </Figure>
+    );
+  }
+
+  if (lang === "audio") {
+    const src = get("url") || get("src") || body;
+    if (!src) return null;
+    const title = get("title");
+    return (
+      <Figure caption={caption}>
+        <div className="blog-audio">
+          {title ? <p className="blog-audio-title">{title}</p> : null}
+          <audio src={resolveSrc(src)} controls preload="metadata" />
+        </div>
+      </Figure>
+    );
+  }
+
+  if (lang === "embed") {
+    const src = get("url") || get("src") || body;
+    if (!isSafeHttp(src)) return null;
+    return (
+      <Figure caption={caption}>
+        <div className="blog-frame" style={{ aspectRatio: get("ratio", "16 / 9") }}>
+          <iframe src={src} title={caption || "embed"} loading="lazy" allowFullScreen />
+        </div>
+      </Figure>
+    );
+  }
+
+  if (lang === "callout" || lang === "info") {
+    const kind = get("type", "info").toLowerCase();
+    const Icon = CALLOUT_ICONS[kind] ?? Info;
+    const title = get("title");
+    return (
+      <aside className={`blog-callout blog-callout-${CALLOUT_ICONS[kind] ? kind : "info"}`}>
+        <Icon className="blog-callout-icon" aria-hidden />
+        <div>
+          {title ? <p className="blog-callout-title">{title}</p> : null}
+          <p className="blog-callout-body">{body || get("text")}</p>
+        </div>
+      </aside>
+    );
+  }
+
+  if (lang === "quote") {
+    const author = get("author");
+    return (
+      <blockquote className="blog-quote">
+        <Quote className="blog-quote-icon" aria-hidden />
+        <p>{body || get("text")}</p>
+        {author ? <cite>— {author}</cite> : null}
+      </blockquote>
+    );
+  }
+
+  if (lang === "button" || lang === "telegram") {
+    const isTg = lang === "telegram";
+    const handle = (get("id") || get("username")).replace(/^@/, "");
+    const href = isTg ? (handle ? `https://t.me/${handle}` : get("url")) : get("url") || body;
+    if (!isSafeHttp(href)) return null;
+    const label = get("label") || (isTg ? `@${handle || "telegram"}` : href);
+    return (
+      <p className="blog-cta-wrap">
+        <a
+          className={`blog-cta ${isTg ? "blog-cta-tg" : ""}`}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+        >
+          {isTg ? <Send className="size-4" aria-hidden /> : <ExternalLink className="size-4" aria-hidden />}
+          {label}
+        </a>
+      </p>
+    );
+  }
+
+  if (lang === "gallery") {
+    const items = (body || get("images"))
+      .split(/[\n,]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (!items.length) return null;
+    return (
+      <Figure caption={caption}>
+        <div className="blog-gallery" data-cols={items.length === 1 ? "1" : "2"}>
+          {items.map((src, i) => (
+            <img
+              key={`${src}-${i}`}
+              src={resolveSrc(src)}
+              alt={caption || `ছবি ${i + 1}`}
+              loading="lazy"
+            />
+          ))}
+        </div>
+      </Figure>
+    );
+  }
+
+  if (lang === "stats") {
+    const rows = body
+      .split("\n")
+      .map((line) => line.split("|").map((s) => s.trim()))
+      .filter((parts) => parts[0]);
+    if (!rows.length) return null;
+    return (
+      <div className="blog-stats">
+        {rows.map((parts, i) => (
+          <div key={i} className="blog-stat">
+            <span className="blog-stat-value">{parts[1] ?? ""}</span>
+            <span className="blog-stat-label">{parts[0]}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
+}
