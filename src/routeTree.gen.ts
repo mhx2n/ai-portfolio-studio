@@ -11,13 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AdminIdRouteImport } from './routes/admin.$id'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as HimusadminIndexRouteImport } from './routes/himusadmin.index'
+import { Route as HimusadminIdRouteImport } from './routes/himusadmin.$id'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
-import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
-import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
+import { Route as HimusadminBlogIndexRouteImport } from './routes/himusadmin.blog.index'
+import { Route as HimusadminBlogIdRouteImport } from './routes/himusadmin.blog.$id'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -30,16 +30,6 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIdRoute = AdminIdRouteImport.update({
-  id: '/admin/$id',
-  path: '/admin/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -50,19 +40,29 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HimusadminIndexRoute = HimusadminIndexRouteImport.update({
+  id: '/himusadmin/',
+  path: '/himusadmin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HimusadminIdRoute = HimusadminIdRouteImport.update({
+  id: '/himusadmin/$id',
+  path: '/himusadmin/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PSlugRoute = PSlugRouteImport.update({
   id: '/p/$slug',
   path: '/p/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminBlogIndexRoute = AdminBlogIndexRouteImport.update({
-  id: '/admin/blog/',
-  path: '/admin/blog/',
+const HimusadminBlogIndexRoute = HimusadminBlogIndexRouteImport.update({
+  id: '/himusadmin/blog/',
+  path: '/himusadmin/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminBlogIdRoute = AdminBlogIdRouteImport.update({
-  id: '/admin/blog/$id',
-  path: '/admin/blog/$id',
+const HimusadminBlogIdRoute = HimusadminBlogIdRouteImport.update({
+  id: '/himusadmin/blog/$id',
+  path: '/himusadmin/blog/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
@@ -74,38 +74,38 @@ const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin/$id': typeof AdminIdRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/himusadmin/$id': typeof HimusadminIdRoute
   '/p/$slug': typeof PSlugRoute
-  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
-  '/admin/blog/$id': typeof AdminBlogIdRoute
-  '/admin/blog/': typeof AdminBlogIndexRoute
+  '/himusadmin/': typeof HimusadminIndexRoute
+  '/himusadmin/blog/$id': typeof HimusadminBlogIdRoute
+  '/himusadmin/blog/': typeof HimusadminBlogIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin/$id': typeof AdminIdRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/himusadmin/$id': typeof HimusadminIdRoute
   '/p/$slug': typeof PSlugRoute
-  '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
-  '/admin/blog/$id': typeof AdminBlogIdRoute
-  '/admin/blog': typeof AdminBlogIndexRoute
+  '/himusadmin': typeof HimusadminIndexRoute
+  '/himusadmin/blog/$id': typeof HimusadminBlogIdRoute
+  '/himusadmin/blog': typeof HimusadminBlogIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin/$id': typeof AdminIdRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/himusadmin/$id': typeof HimusadminIdRoute
   '/p/$slug': typeof PSlugRoute
-  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
-  '/admin/blog/$id': typeof AdminBlogIdRoute
-  '/admin/blog/': typeof AdminBlogIndexRoute
+  '/himusadmin/': typeof HimusadminIndexRoute
+  '/himusadmin/blog/$id': typeof HimusadminBlogIdRoute
+  '/himusadmin/blog/': typeof HimusadminBlogIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
@@ -113,50 +113,50 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/admin/$id'
     | '/blog/$slug'
+    | '/himusadmin/$id'
     | '/p/$slug'
-    | '/admin/'
     | '/blog/'
-    | '/admin/blog/$id'
-    | '/admin/blog/'
+    | '/himusadmin/'
+    | '/himusadmin/blog/$id'
+    | '/himusadmin/blog/'
     | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/admin/$id'
     | '/blog/$slug'
+    | '/himusadmin/$id'
     | '/p/$slug'
-    | '/admin'
     | '/blog'
-    | '/admin/blog/$id'
-    | '/admin/blog'
+    | '/himusadmin'
+    | '/himusadmin/blog/$id'
+    | '/himusadmin/blog'
     | '/api/public/media/$'
   id:
     | '__root__'
     | '/'
     | '/auth'
-    | '/admin/$id'
     | '/blog/$slug'
+    | '/himusadmin/$id'
     | '/p/$slug'
-    | '/admin/'
     | '/blog/'
-    | '/admin/blog/$id'
-    | '/admin/blog/'
+    | '/himusadmin/'
+    | '/himusadmin/blog/$id'
+    | '/himusadmin/blog/'
     | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
-  AdminIdRoute: typeof AdminIdRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  HimusadminIdRoute: typeof HimusadminIdRoute
   PSlugRoute: typeof PSlugRoute
-  AdminIndexRoute: typeof AdminIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
-  AdminBlogIdRoute: typeof AdminBlogIdRoute
-  AdminBlogIndexRoute: typeof AdminBlogIndexRoute
+  HimusadminIndexRoute: typeof HimusadminIndexRoute
+  HimusadminBlogIdRoute: typeof HimusadminBlogIdRoute
+  HimusadminBlogIndexRoute: typeof HimusadminBlogIndexRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
@@ -176,20 +176,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/$id': {
-      id: '/admin/$id'
-      path: '/admin/$id'
-      fullPath: '/admin/$id'
-      preLoaderRoute: typeof AdminIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -204,6 +190,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/himusadmin/': {
+      id: '/himusadmin/'
+      path: '/himusadmin'
+      fullPath: '/himusadmin/'
+      preLoaderRoute: typeof HimusadminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/himusadmin/$id': {
+      id: '/himusadmin/$id'
+      path: '/himusadmin/$id'
+      fullPath: '/himusadmin/$id'
+      preLoaderRoute: typeof HimusadminIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/$slug': {
       id: '/p/$slug'
       path: '/p/$slug'
@@ -211,18 +211,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/blog/': {
-      id: '/admin/blog/'
-      path: '/admin/blog'
-      fullPath: '/admin/blog/'
-      preLoaderRoute: typeof AdminBlogIndexRouteImport
+    '/himusadmin/blog/': {
+      id: '/himusadmin/blog/'
+      path: '/himusadmin/blog'
+      fullPath: '/himusadmin/blog/'
+      preLoaderRoute: typeof HimusadminBlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/blog/$id': {
-      id: '/admin/blog/$id'
-      path: '/admin/blog/$id'
-      fullPath: '/admin/blog/$id'
-      preLoaderRoute: typeof AdminBlogIdRouteImport
+    '/himusadmin/blog/$id': {
+      id: '/himusadmin/blog/$id'
+      path: '/himusadmin/blog/$id'
+      fullPath: '/himusadmin/blog/$id'
+      preLoaderRoute: typeof HimusadminBlogIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/media/$': {
@@ -238,13 +238,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
-  AdminIdRoute: AdminIdRoute,
   BlogSlugRoute: BlogSlugRoute,
+  HimusadminIdRoute: HimusadminIdRoute,
   PSlugRoute: PSlugRoute,
-  AdminIndexRoute: AdminIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
-  AdminBlogIdRoute: AdminBlogIdRoute,
-  AdminBlogIndexRoute: AdminBlogIndexRoute,
+  HimusadminIndexRoute: HimusadminIndexRoute,
+  HimusadminBlogIdRoute: HimusadminBlogIdRoute,
+  HimusadminBlogIndexRoute: HimusadminBlogIndexRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport
