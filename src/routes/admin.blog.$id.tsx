@@ -66,6 +66,25 @@ function PostEditor() {
     setPost((prev) => (prev ? { ...prev, ...next } : prev));
   }
 
+  /** Inserts a markdown snippet at the caret inside the body textarea. */
+  function insertSnippet(text: string) {
+    const el = bodyRef.current;
+    setPost((prev) => {
+      if (!prev) return prev;
+      const start = el?.selectionStart ?? prev.body_md.length;
+      const end = el?.selectionEnd ?? start;
+      const body = prev.body_md.slice(0, start) + text + prev.body_md.slice(end);
+      requestAnimationFrame(() => {
+        if (!el) return;
+        el.focus();
+        const caret = start + text.length;
+        el.setSelectionRange(caret, caret);
+      });
+      return { ...prev, body_md: body };
+    });
+  }
+
+
   async function save(publishOverride?: boolean) {
     if (!post) return;
     const willPublish = publishOverride ?? post.is_published;
