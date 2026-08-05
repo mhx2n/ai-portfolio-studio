@@ -56,7 +56,7 @@ function PostEditor() {
         if (!alive) return;
         if (error || !data) {
           toast.error("পোস্ট পাওয়া যায়নি।");
-          navigate({ to: "/admin/blog" });
+          navigate({ to: "/himusadmin/blog" });
           return;
         }
         setPost(data as unknown as BlogPostRow);
@@ -161,7 +161,7 @@ function PostEditor() {
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
-            to="/admin/blog"
+            to="/himusadmin/blog"
             className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="size-3.5" /> ব্লগ ম্যানেজার
