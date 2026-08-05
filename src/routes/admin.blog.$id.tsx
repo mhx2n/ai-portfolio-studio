@@ -296,18 +296,26 @@ function PostEditor() {
               </div>
             </div>
 
+            {tab !== "preview" ? (
+              <div className="mt-3">
+                <MarkdownToolbar onInsert={insertSnippet} />
+              </div>
+            ) : null}
+
             <div
               className={`mt-4 grid gap-4 ${tab === "split" ? "lg:grid-cols-2" : "grid-cols-1"}`}
             >
               {tab !== "preview" ? (
                 <textarea
+                  ref={bodyRef}
                   value={post.body_md}
                   onChange={(e) => patch({ body_md: e.target.value })}
                   spellCheck={false}
                   className="min-h-[60vh] w-full resize-y rounded-xl border bg-background p-4 font-mono text-[13px] leading-relaxed"
-                  placeholder="# হেডিং&#10;&#10;Markdown সাপোর্টেড: **বোল্ড**, `কোড`, লিস্ট, টেবিল, ইমেজ।"
+                  placeholder="# হেডিং&#10;&#10;Markdown সাপোর্টেড: **বোল্ড**, `কোড`, লিস্ট, টেবিল, ইমেজ। উপরের বাটন দিয়ে ভিডিও/অডিও/কলআউট ব্লক যোগ করুন।"
                 />
               ) : null}
+
               {tab !== "write" ? (
                 <div className="min-h-[60vh] overflow-auto rounded-xl border bg-background p-4">
                   <Markdown>{post.body_md || "_প্রিভিউ এখানে দেখাবে…_"}</Markdown>
