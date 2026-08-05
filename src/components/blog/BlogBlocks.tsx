@@ -67,7 +67,7 @@ function embedUrl(url: string): string | null {
   return null;
 }
 
-function Figure({
+function Frame({
   caption,
   size,
   children,
