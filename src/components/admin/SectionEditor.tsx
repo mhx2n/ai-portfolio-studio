@@ -262,9 +262,7 @@ export function SectionEditor({ userId, section, onChange, onRemove, onMove }: P
                   type="number"
                   step="any"
                   value={d.lat ?? ""}
-                  onChange={(e) =>
-                    setData({ lat: e.target.value === "" ? undefined : Number(e.target.value) })
-                  }
+                  onChange={(e) => setCoord("lat", e.target.value)}
                 />
               </div>
               <div className="space-y-2">
@@ -273,11 +271,10 @@ export function SectionEditor({ userId, section, onChange, onRemove, onMove }: P
                   type="number"
                   step="any"
                   value={d.lng ?? ""}
-                  onChange={(e) =>
-                    setData({ lng: e.target.value === "" ? undefined : Number(e.target.value) })
-                  }
+                  onChange={(e) => setCoord("lng", e.target.value)}
                 />
               </div>
+
             </div>
           ) : null}
 
