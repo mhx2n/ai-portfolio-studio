@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { slugify, type PortfolioRow } from "@/lib/portfolio-types";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/admin/")({
+export const Route = createFileRoute("/himusadmin/")({
   head: () => ({
     meta: [
       { title: "অ্যাডমিন ড্যাশবোর্ড — Folio Studio" },
