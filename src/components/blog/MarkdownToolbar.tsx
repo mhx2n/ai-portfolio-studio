@@ -35,6 +35,7 @@ const INLINE: Snippet[] = [
 ];
 
 const BLOCKS: Snippet[] = [
+  // moved into BlockComposer (form-based sections)
   {
     label: "ভিডিও",
     icon: Video,
@@ -80,7 +81,7 @@ const BLOCKS: Snippet[] = [
 export function MarkdownToolbar({ onInsert }: { onInsert: (text: string) => void }) {
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      {[...INLINE, ...BLOCKS].map((s) => (
+      {INLINE.map((s) => (
         <button
           key={s.label}
           type="button"

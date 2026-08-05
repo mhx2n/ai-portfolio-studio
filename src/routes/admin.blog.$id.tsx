@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { MediaInput } from "@/components/admin/MediaInput";
 import { Markdown } from "@/components/blog/Markdown";
 import { MarkdownToolbar } from "@/components/blog/MarkdownToolbar";
+import { BlockComposer } from "@/components/blog/BlockComposer";
 
 export const Route = createFileRoute("/admin/blog/$id")({
   head: () => ({
@@ -318,8 +319,17 @@ function PostEditor() {
             </div>
 
             {tab !== "preview" ? (
-              <div className="mt-3">
+              <div className="mt-3 space-y-3">
                 <MarkdownToolbar onInsert={insertSnippet} />
+                <div className="rounded-2xl border border-dashed p-3">
+                  <p className="mb-2 text-[11px] font-medium text-muted-foreground">
+                    সেকশন যোগ করুন — যেটা চান তার + এ চাপ দিন, তথ্য বসিয়ে সেভ করুন
+                  </p>
+                  <BlockComposer
+                    {...(user ? { userId: user.id } : {})}
+                    onInsert={insertSnippet}
+                  />
+                </div>
               </div>
             ) : null}
 
