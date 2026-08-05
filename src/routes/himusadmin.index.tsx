@@ -72,7 +72,7 @@ function AdminDashboard() {
       toast.error("তৈরি করা যায়নি, আবার চেষ্টা করুন।");
       return;
     }
-    navigate({ to: "/admin/$id", params: { id: data.id } });
+    navigate({ to: "/himusadmin/$id", params: { id: data.id } });
   }
 
   async function remove(id: string) {
@@ -104,7 +104,7 @@ function AdminDashboard() {
               নতুন পোর্টফোলিও
             </Button>
             <Button asChild variant="outline">
-              <Link to="/admin/blog">ব্লগ ম্যানেজার</Link>
+              <Link to="/himusadmin/blog">ব্লগ ম্যানেজার</Link>
             </Button>
             <Button
               variant="outline"
@@ -152,7 +152,7 @@ function AdminDashboard() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Button asChild size="sm" variant="ghost">
-                    <Link to="/admin/$id" params={{ id: r.id }}>
+                    <Link to="/himusadmin/$id" params={{ id: r.id }}>
                       <Pencil className="size-4" /> এডিট
                     </Link>
                   </Button>
