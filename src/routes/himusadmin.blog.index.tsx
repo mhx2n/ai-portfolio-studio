@@ -79,7 +79,7 @@ function BlogAdmin() {
       toast.error("তৈরি করা যায়নি।");
       return;
     }
-    navigate({ to: "/admin/blog/$id", params: { id: data.id } });
+    navigate({ to: "/himusadmin/blog/$id", params: { id: data.id } });
   }
 
   async function remove(id: string) {
@@ -112,7 +112,7 @@ function BlogAdmin() {
     <main className="min-h-screen px-5 py-10">
       <div className="mx-auto max-w-4xl">
         <Link
-          to="/admin"
+          to="/himusadmin"
           className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-3.5" /> অ্যাডমিন প্যানেল
@@ -166,7 +166,7 @@ function BlogAdmin() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Button asChild size="sm" variant="ghost">
-                    <Link to="/admin/blog/$id" params={{ id: r.id }}>
+                    <Link to="/himusadmin/blog/$id" params={{ id: r.id }}>
                       <Pencil className="size-4" /> এডিট
                     </Link>
                   </Button>
