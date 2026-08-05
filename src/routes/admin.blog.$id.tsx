@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, ExternalLink, Loader2, Save, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,7 @@ import { readingMinutes, type BlogPostRow } from "@/lib/blog-types";
 import { Button } from "@/components/ui/button";
 import { MediaInput } from "@/components/admin/MediaInput";
 import { Markdown } from "@/components/blog/Markdown";
+import { MarkdownToolbar } from "@/components/blog/MarkdownToolbar";
 
 export const Route = createFileRoute("/admin/blog/$id")({
   head: () => ({
@@ -35,6 +36,7 @@ function PostEditor() {
   const [saving, setSaving] = useState(false);
   const [aiBusy, setAiBusy] = useState<string | null>(null);
   const [tab, setTab] = useState<"write" | "preview" | "split">("split");
+  const bodyRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
