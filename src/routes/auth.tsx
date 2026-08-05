@@ -36,7 +36,7 @@ function AuthPage() {
   const [sentConfirm, setSentConfirm] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/admin" });
+    if (!loading && user) navigate({ to: "/himusadmin" });
   }, [user, loading, navigate]);
 
   async function signIn(e: React.FormEvent) {
@@ -45,7 +45,7 @@ function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) toast.error(error.message);
-    else navigate({ to: "/admin" });
+    else navigate({ to: "/himusadmin" });
   }
 
   async function signUp(e: React.FormEvent) {
@@ -55,7 +55,7 @@ function AuthPage() {
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin + "/admin",
+        emailRedirectTo: window.location.origin + "/himusadmin",
         data: { full_name: fullName },
       },
     });
@@ -81,7 +81,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/admin" });
+    navigate({ to: "/himusadmin" });
   }
 
 
