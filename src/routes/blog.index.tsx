@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Eye } from "lucide-react";
 import { getBlogIndex } from "@/lib/blog.functions";
 import { fontStack, formatDate } from "@/lib/blog-types";
+import type { PublicPostCard } from "@/lib/blog-types";
 import { mediaUrl } from "@/lib/portfolio-types";
 
 export const Route = createFileRoute("/blog/")({
@@ -70,7 +71,7 @@ function BlogIndex() {
   );
 }
 
-type Card = ReturnType<typeof Route.useLoaderData>["posts"][number];
+type Card = PublicPostCard;
 
 function PostFeature({ post }: { post: Card }) {
   return (
