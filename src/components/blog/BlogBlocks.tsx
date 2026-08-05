@@ -24,7 +24,7 @@ export function isBlockLang(value: string): value is BlockLang {
 
 /** Parses simple `key: value` lines; everything after a blank line is free text. */
 function parseBlock(raw: string) {
-  const fields: Record<string, string> = {};
+  const map = new Map<string, string>();
   const rest: string[] = [];
   let inBody = false;
   for (const line of raw.replace(/\r/g, "").split("\n")) {
@@ -33,17 +33,18 @@ function parseBlock(raw: string) {
       continue;
     }
     if (!line.trim()) {
-      if (Object.keys(fields).length) inBody = true;
+      if (map.size) inBody = true;
       continue;
     }
     const match = /^([a-zA-Z_][\w-]*)\s*:\s*(.*)$/.exec(line.trim());
-    if (match) fields[match[1].toLowerCase()] = match[2].trim();
+    if (match && match[1] !== undefined) map.set(match[1].toLowerCase(), (match[2] ?? "").trim());
     else {
       inBody = true;
       rest.push(line);
     }
   }
-  return { fields, body: rest.join("\n").trim() };
+  const get = (key: string, fallback = "") => map.get(key) ?? fallback;
+  return { get, body: rest.join("\n").trim() };
 }
 
 function isSafeHttp(url: string) {
@@ -60,13 +61,13 @@ function resolveSrc(value: string) {
 
 function embedUrl(url: string): string | null {
   const yt = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/i.exec(url);
-  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
+  if (yt?.[1]) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
   const vimeo = /vimeo\.com\/(?:video\/)?(\d+)/i.exec(url);
-  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
+  if (vimeo?.[1]) return `https://player.vimeo.com/video/${vimeo[1]}`;
   return null;
 }
 
-function Figure({ caption, children }: { caption?: string; children: React.ReactNode }) {
+function Figure({ caption, children }: { caption: string; children: React.ReactNode }) {
   return (
     <figure className="blog-block">
       {children}
@@ -75,27 +76,29 @@ function Figure({ caption, children }: { caption?: string; children: React.React
   );
 }
 
-const CALLOUT_ICONS = {
+const CALLOUT_ICONS: Record<string, typeof Info> = {
   info: Info,
   tip: Lightbulb,
   success: CheckCircle2,
   warn: AlertTriangle,
-} as const;
+};
 
 export function BlogBlock({ lang, source }: { lang: BlockLang; source: string }) {
-  const { fields, body } = useMemo(() => parseBlock(source), [source]);
+  const { get, body } = useMemo(() => parseBlock(source), [source]);
+  const caption = get("caption");
 
   if (lang === "video") {
-    const src = fields.url ?? fields.src ?? body;
-    const iframe = isSafeHttp(src) ? embedUrl(src) : null;
+    const src = get("url") || get("src") || body;
     if (!src) return null;
+    const iframe = isSafeHttp(src) ? embedUrl(src) : null;
+    const poster = get("poster");
     return (
-      <Figure caption={fields.caption}>
+      <Figure caption={caption}>
         <div className="blog-frame">
           {iframe ? (
             <iframe
               src={iframe}
-              title={fields.caption || "video"}
+              title={caption || "video"}
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
               allowFullScreen
@@ -106,7 +109,7 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
               controls
               playsInline
               preload="metadata"
-              poster={fields.poster ? resolveSrc(fields.poster) : undefined}
+              {...(poster ? { poster: resolveSrc(poster) } : {})}
             />
           )}
         </div>
@@ -115,12 +118,13 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
   }
 
   if (lang === "audio") {
-    const src = fields.url ?? fields.src ?? body;
+    const src = get("url") || get("src") || body;
     if (!src) return null;
+    const title = get("title");
     return (
-      <Figure caption={fields.caption}>
+      <Figure caption={caption}>
         <div className="blog-audio">
-          {fields.title ? <p className="blog-audio-title">{fields.title}</p> : null}
+          {title ? <p className="blog-audio-title">{title}</p> : null}
           <audio src={resolveSrc(src)} controls preload="metadata" />
         </div>
       </Figure>
@@ -128,51 +132,49 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
   }
 
   if (lang === "embed") {
-    const src = fields.url ?? fields.src ?? body;
+    const src = get("url") || get("src") || body;
     if (!isSafeHttp(src)) return null;
     return (
-      <Figure caption={fields.caption}>
-        <div className="blog-frame" style={{ aspectRatio: fields.ratio || "16 / 9" }}>
-          <iframe src={src} title={fields.caption || "embed"} loading="lazy" allowFullScreen />
+      <Figure caption={caption}>
+        <div className="blog-frame" style={{ aspectRatio: get("ratio", "16 / 9") }}>
+          <iframe src={src} title={caption || "embed"} loading="lazy" allowFullScreen />
         </div>
       </Figure>
     );
   }
 
   if (lang === "callout" || lang === "info") {
-    const kind = (fields.type ?? "info").toLowerCase() as keyof typeof CALLOUT_ICONS;
+    const kind = get("type", "info").toLowerCase();
     const Icon = CALLOUT_ICONS[kind] ?? Info;
+    const title = get("title");
     return (
       <aside className={`blog-callout blog-callout-${CALLOUT_ICONS[kind] ? kind : "info"}`}>
         <Icon className="blog-callout-icon" aria-hidden />
         <div>
-          {fields.title ? <p className="blog-callout-title">{fields.title}</p> : null}
-          <p className="blog-callout-body">{body || fields.text || ""}</p>
+          {title ? <p className="blog-callout-title">{title}</p> : null}
+          <p className="blog-callout-body">{body || get("text")}</p>
         </div>
       </aside>
     );
   }
 
   if (lang === "quote") {
+    const author = get("author");
     return (
       <blockquote className="blog-quote">
         <Quote className="blog-quote-icon" aria-hidden />
-        <p>{body || fields.text || ""}</p>
-        {fields.author ? <cite>— {fields.author}</cite> : null}
+        <p>{body || get("text")}</p>
+        {author ? <cite>— {author}</cite> : null}
       </blockquote>
     );
   }
 
   if (lang === "button" || lang === "telegram") {
     const isTg = lang === "telegram";
-    const handle = (fields.id ?? fields.username ?? "").replace(/^@/, "");
-    const href = isTg
-      ? handle
-        ? `https://t.me/${handle}`
-        : (fields.url ?? "")
-      : (fields.url ?? body);
+    const handle = (get("id") || get("username")).replace(/^@/, "");
+    const href = isTg ? (handle ? `https://t.me/${handle}` : get("url")) : get("url") || body;
     if (!isSafeHttp(href)) return null;
-    const label = fields.label ?? (isTg ? `@${handle || "telegram"}` : href);
+    const label = get("label") || (isTg ? `@${handle || "telegram"}` : href);
     return (
       <p className="blog-cta-wrap">
         <a
@@ -189,16 +191,21 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
   }
 
   if (lang === "gallery") {
-    const items = (body || fields.images || "")
+    const items = (body || get("images"))
       .split(/[\n,]/)
       .map((s) => s.trim())
       .filter(Boolean);
     if (!items.length) return null;
     return (
-      <Figure caption={fields.caption}>
+      <Figure caption={caption}>
         <div className="blog-gallery" data-cols={items.length === 1 ? "1" : "2"}>
           {items.map((src, i) => (
-            <img key={`${src}-${i}`} src={resolveSrc(src)} alt={fields.caption || `ছবি ${i + 1}`} loading="lazy" />
+            <img
+              key={`${src}-${i}`}
+              src={resolveSrc(src)}
+              alt={caption || `ছবি ${i + 1}`}
+              loading="lazy"
+            />
           ))}
         </div>
       </Figure>
