@@ -53,6 +53,12 @@ function Landing() {
           </span>
           <div className="flex items-center gap-2">
             <Link
+              to="/blog"
+              className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              ব্লগ
+            </Link>
+            <Link
               to="/auth"
               className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >

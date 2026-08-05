@@ -103,6 +103,9 @@ function AdminDashboard() {
               {creating ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
               নতুন পোর্টফোলিও
             </Button>
+            <Button asChild variant="outline">
+              <Link to="/admin/blog">ব্লগ ম্যানেজার</Link>
+            </Button>
             <Button
               variant="outline"
               onClick={async () => {
