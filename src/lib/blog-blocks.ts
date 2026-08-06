@@ -98,7 +98,32 @@ export const SIZEABLE_LANGS = [
   "info",
   "button",
   "telegram",
+  "columns",
+  "cards",
+  "banner",
 ];
+
+/** Alignment meta key (`align:`). */
+export type BlockAlign = "left" | "center" | "right";
+
+export const ALIGNABLE_LANGS = ["columns", "cards", "banner"];
+
+export function canAlign(lang: string | null) {
+  return !!lang && ALIGNABLE_LANGS.includes(lang);
+}
+
+export function readAlign(source: string): BlockAlign {
+  const match = /^[ \t]*align[ \t]*:[ \t]*(left|center|right)[ \t]*$/im.exec(source);
+  return (match?.[1] as BlockAlign | undefined) ?? "left";
+}
+
+export function writeAlign(source: string, align: BlockAlign) {
+  const stripped = source
+    .replace(/^[ \t]*align[ \t]*:[ \t]*[\w-]*[ \t]*\n?/gim, "")
+    .replace(/^\n+/, "");
+  if (align === "left") return stripped;
+  return `align: ${align}\n${stripped}`;
+}
 
 export function canResize(lang: string | null) {
   return !!lang && SIZEABLE_LANGS.includes(lang);
@@ -116,6 +141,11 @@ const LABELS: Record<string, string> = {
   button: "বাটন",
   telegram: "টেলিগ্রাম CTA",
   code: "কোড",
+  columns: "কলাম",
+  cards: "কার্ড গ্রিড",
+  banner: "ব্যানার হেডিং",
+  divider: "ডিভাইডার",
+  spacer: "ফাঁকা জায়গা",
 };
 
 export function blockLabel(block: CanvasBlock) {
