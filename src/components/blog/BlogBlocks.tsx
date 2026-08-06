@@ -1,6 +1,25 @@
 import { useMemo } from "react";
-import { Info, AlertTriangle, CheckCircle2, Lightbulb, Send, Quote, ExternalLink } from "lucide-react";
+import {
+  Info,
+  AlertTriangle,
+  CheckCircle2,
+  Lightbulb,
+  Send,
+  Quote,
+  ExternalLink,
+  Star,
+  Heart,
+  Flame,
+  Rocket,
+  Bell,
+  MapPin,
+  Link as LinkIcon,
+  Download,
+  Play,
+  Sparkle,
+} from "lucide-react";
 import { mediaUrl } from "@/lib/portfolio-types";
+
 
 /** Known custom block languages usable as ```name fences inside post markdown. */
 export const BLOG_BLOCK_LANGS = [
