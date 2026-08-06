@@ -9,8 +9,6 @@ const requiredPaths = isLovableSandbox
   : [
       "dist/_worker.js/index.js",
       "dist/_routes.json",
-      "dist/client/_worker.js/index.js",
-      "dist/client/_routes.json",
     ];
 
 for (const path of requiredPaths) {
