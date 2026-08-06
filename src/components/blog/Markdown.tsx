@@ -8,15 +8,27 @@ import "highlight.js/styles/github-dark.css";
 import { BlogBlock, isBlockLang } from "./BlogBlocks";
 import { blogHtmlSchema } from "./html-schema";
 
+/** Flattens any nested React children (e.g. syntax-highlight spans) back to plain text. */
+function toText(node: React.ReactNode): string {
+  if (node === null || node === undefined || node === false || node === true) return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(toText).join("");
+  if (isValidElement(node)) {
+    const props = node.props as { children?: React.ReactNode };
+    return toText(props.children);
+  }
+  return "";
+}
+
 /** Pulls the fence language + raw text out of a <pre><code> pair. */
 function readFence(children: React.ReactNode) {
   if (!isValidElement(children)) return null;
   const props = children.props as { className?: string; children?: React.ReactNode };
   const lang = /language-([\w-]+)/.exec(props.className ?? "")?.[1];
   if (!lang) return null;
-  const text = Array.isArray(props.children) ? props.children.join("") : String(props.children ?? "");
-  return { lang, text };
+  return { lang, text: toText(props.children) };
 }
+
 
 /** Read-only markdown renderer with sanitized raw HTML support. */
 export function Markdown({ children }: { children: string }) {
