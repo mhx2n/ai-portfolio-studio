@@ -7,6 +7,7 @@ import rehypeSanitize from "rehype-sanitize";
 import "highlight.js/styles/github-dark.css";
 import { BlogBlock, isBlockLang } from "./BlogBlocks";
 import { blogHtmlSchema } from "./html-schema";
+import { colorizeMarkdown } from "@/lib/blog-color";
 
 /** Flattens any nested React children (e.g. syntax-highlight spans) back to plain text. */
 function toText(node: React.ReactNode): string {
@@ -60,7 +61,7 @@ export function Markdown({ children }: { children: string }) {
           ),
         }}
       >
-        {children}
+        {colorizeMarkdown(children ?? "")}
       </ReactMarkdown>
     </div>
   );

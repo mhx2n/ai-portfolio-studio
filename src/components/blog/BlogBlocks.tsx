@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { mediaUrl } from "@/lib/portfolio-types";
 import { RawHtml } from "./RawHtml";
+import { RichText } from "./RichText";
 
 /** Known custom block languages usable as ```name fences inside post markdown. */
 export const BLOG_BLOCK_LANGS = [
@@ -226,7 +227,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
     return (
       <Figure caption={caption}>
         <div className="blog-audio">
-          {title ? <p className="blog-audio-title">{title}</p> : null}
+          {title ? <RichText as="div" className="blog-audio-title">{title}</RichText> : null}
           <audio src={resolveSrc(src)} controls preload="metadata" />
         </div>
       </Figure>
@@ -256,8 +257,8 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
       >
         <Icon className="blog-callout-icon" aria-hidden />
         <div>
-          {title ? <p className="blog-callout-title">{title}</p> : null}
-          <p className="blog-callout-body">{body || get("text")}</p>
+          {title ? <RichText className="blog-callout-title">{title}</RichText> : null}
+          <RichText className="blog-callout-body">{body || get("text")}</RichText>
         </div>
       </aside>
     );
@@ -269,7 +270,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
     return (
       <blockquote className="blog-quote" data-size={size}>
         <Icon className="blog-quote-icon" aria-hidden />
-        <p>{body || get("text")}</p>
+        <RichText>{body || get("text")}</RichText>
         {author ? <cite>— {author}</cite> : null}
       </blockquote>
     );
@@ -294,7 +295,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
             return <Icon className="size-4" aria-hidden />;
           })()}
 
-          {label}
+          <RichText as="span">{label}</RichText>
         </a>
       </p>
     );
@@ -332,8 +333,8 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
       <div className="blog-stats" data-size={size}>
         {rows.map((parts, i) => (
           <div key={i} className="blog-stat">
-            <span className="blog-stat-value">{parts[1] ?? ""}</span>
-            <span className="blog-stat-label">{parts[0]}</span>
+            <RichText as="span" className="blog-stat-value">{parts[1] ?? ""}</RichText>
+            <RichText as="span" className="blog-stat-label">{parts[0]}</RichText>
           </div>
         ))}
       </div>
@@ -355,9 +356,9 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
           return (
             <div key={i} className="blog-col">
               {hasTitle ? (
-                <p className="blog-col-title">{(first ?? "").replace(/^#+\s*/, "")}</p>
+                <RichText className="blog-col-title">{(first ?? "").replace(/^#+\s*/, "")}</RichText>
               ) : null}
-              <p className="blog-col-body">{(hasTitle ? rest.join("\n") : part).trim()}</p>
+              <RichText className="blog-col-body">{(hasTitle ? rest.join("\n") : part).trim()}</RichText>
             </div>
           );
         })}
@@ -376,8 +377,8 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
       <div className="blog-cards" data-cols={String(cols)} data-size={size} data-align={align}>
         {rows.map((parts, i) => (
           <div key={i} className="blog-card">
-            <p className="blog-card-title">{parts[0]}</p>
-            {parts[1] ? <p className="blog-card-body">{parts[1]}</p> : null}
+            <RichText className="blog-card-title">{parts[0]}</RichText>
+            {parts[1] ? <RichText className="blog-card-body">{parts[1]}</RichText> : null}
           </div>
         ))}
       </div>
@@ -395,8 +396,8 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
         data-align={align}
       >
         {Icon ? <Icon className="blog-banner-icon" aria-hidden /> : null}
-        <p className="blog-banner-title">{title}</p>
-        {get("subtitle") ? <p className="blog-banner-sub">{get("subtitle")}</p> : null}
+        <RichText className="blog-banner-title">{title}</RichText>
+        {get("subtitle") ? <RichText className="blog-banner-sub">{get("subtitle")}</RichText> : null}
       </div>
     );
   }
