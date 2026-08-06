@@ -14,6 +14,11 @@ export const BLOG_BLOCK_LANGS = [
   "gallery",
   "info",
   "stats",
+  "columns",
+  "cards",
+  "banner",
+  "divider",
+  "spacer",
 ] as const;
 
 export type BlockLang = (typeof BLOG_BLOCK_LANGS)[number];
