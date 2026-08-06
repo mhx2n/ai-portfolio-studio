@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/useAuth";
+import { signUpWithInvite } from "@/lib/invites.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +34,8 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [sentConfirm, setSentConfirm] = useState(false);
+  const [inviteCode, setInviteCode] = useState("");
+  const sentConfirm = false;
 
   useEffect(() => {
     if (!loading && user) navigate({ to: "/himusadmin" });
@@ -51,24 +53,28 @@ function AuthPage() {
   async function signUp(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: window.location.origin + "/himusadmin",
-        data: { full_name: fullName },
-      },
-    });
-    setBusy(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    if (!data.session) {
-      setSentConfirm(true);
-      toast.success("ইমেইল দেখুন — কনফার্ম লিংক পাঠানো হয়েছে।");
+    try {
+      const result = await signUpWithInvite({
+        data: { email, password, fullName, code: inviteCode },
+      });
+      if (!result.ok) {
+        toast.error(result.reason);
+        return;
+      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("অ্যাকাউন্ট তৈরি হয়েছে — স্বাগতম!");
+      navigate({ to: "/himusadmin" });
+    } catch {
+      toast.error("সাইন আপ করা যায়নি, আবার চেষ্টা করুন।");
+    } finally {
+      setBusy(false);
     }
   }
+
 
   async function google() {
     setBusy(true);
@@ -170,6 +176,21 @@ function AuthPage() {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="su-code">ইউনিক কোড</Label>
+                    <Input
+                      id="su-code"
+                      required
+                      placeholder="XXXXX-XXXXX"
+                      className="font-mono tracking-widest"
+                      value={inviteCode}
+                      onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      অ্যাডমিন থেকে পাওয়া কোডটি দিন — ইমেইল কনফার্ম করার দরকার নেই।
+                    </p>
+                  </div>
+
                   <Button type="submit" className="w-full" disabled={busy}>
                     {busy ? <Loader2 className="size-4 animate-spin" /> : "অ্যাকাউন্ট তৈরি করুন"}
                   </Button>

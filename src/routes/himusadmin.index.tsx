@@ -106,6 +106,10 @@ function AdminDashboard() {
             <Button asChild variant="outline">
               <Link to="/himusadmin/blog">ব্লগ ম্যানেজার</Link>
             </Button>
+            <Button asChild variant="outline">
+              <Link to="/himusadmin/codes">ইনভাইট কোড</Link>
+            </Button>
+
             <Button
               variant="outline"
               onClick={async () => {
