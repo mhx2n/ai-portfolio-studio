@@ -53,6 +53,12 @@ function fence(lang: string, meta: Record<string, string>, body?: string) {
   return `\n\`\`\`${lang}\n${text}\n\`\`\`\n\n`;
 }
 
+const ALIGN_OPTIONS = [
+  { value: "left", label: "বাঁয়ে" },
+  { value: "center", label: "মাঝে" },
+  { value: "right", label: "ডানে" },
+];
+
 const BLOCKS: BlockDef[] = [
   {
     id: "video",
