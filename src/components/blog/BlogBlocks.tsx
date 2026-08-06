@@ -93,17 +93,21 @@ function embedUrl(url: string): string | null {
 
 function Frame({
   caption,
+  captionPos,
   size,
   children,
 }: {
   caption: string;
+  captionPos: string;
   size: string;
   children: React.ReactNode;
 }) {
+  const cap = caption ? <figcaption className="blog-caption">{caption}</figcaption> : null;
   return (
     <figure className="blog-block" data-size={size}>
+      {captionPos === "top" ? cap : null}
       {children}
-      {caption ? <figcaption className="blog-caption">{caption}</figcaption> : null}
+      {captionPos === "top" ? null : cap}
     </figure>
   );
 }
@@ -115,16 +119,51 @@ const CALLOUT_ICONS: Record<string, typeof Info> = {
   warn: AlertTriangle,
 };
 
+/** Optional decorative icons authors can pick per block. */
+const PICK_ICONS: Record<string, typeof Info> = {
+  info: Info,
+  tip: Lightbulb,
+  success: CheckCircle2,
+  warn: AlertTriangle,
+  star: Star,
+  heart: Heart,
+  flame: Flame,
+  rocket: Rocket,
+  bell: Bell,
+  pin: MapPin,
+  link: LinkIcon,
+  download: Download,
+  play: Play,
+  sparkle: Sparkle,
+};
+
+/** Wraps a block so the author-chosen width (in %) applies to any block type. */
 export function BlogBlock({ lang, source }: { lang: BlockLang; source: string }) {
+  const width = Number(/^[ \t]*width[ \t]*:[ \t]*(\d+)/im.exec(source)?.[1] ?? "100");
+  const w = Number.isFinite(width) ? Math.min(100, Math.max(30, width)) : 100;
+  const inner = <BlockBody lang={lang} source={source} />;
+  if (w >= 100) return inner;
+  return (
+    <div className="blog-width" style={{ width: `${w}%` }}>
+      {inner}
+    </div>
+  );
+}
+
+function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
   const { get, body } = useMemo(() => parseBlock(source), [source]);
   const caption = get("caption");
   const size = get("size", "full");
   const align = get("align", "left");
+  const captionPos = get("caption_pos", "bottom");
+  const pickedIcon = PICK_ICONS[get("icon").toLowerCase()];
   const Figure = (props: { caption: string; children: React.ReactNode }) => (
-    <Frame caption={props.caption} size={size}>
+    <Frame caption={props.caption} captionPos={captionPos} size={size}>
       {props.children}
     </Frame>
   );
+
+
 
 
   if (lang === "video") {
