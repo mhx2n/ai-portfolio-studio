@@ -26,17 +26,11 @@ export function JournalShell({
         } as React.CSSProperties
       }
     >
-      <header className="journal-bar">
-        {reader ? (
-          <span className="journal-brand truncate">{settings.title}</span>
-        ) : (
+      {reader ? null : (
+        <header className="journal-bar">
           <Link to="/blog" className="journal-brand truncate">
             {settings.title}
           </Link>
-        )}
-        {reader ? (
-          <span className="journal-navlink shrink-0">Journal</span>
-        ) : (
           <nav className="flex shrink-0 items-center gap-4">
             <Link to="/blog" className="journal-navlink">
               Journal
@@ -45,20 +39,23 @@ export function JournalShell({
               Home
             </Link>
           </nav>
-        )}
-      </header>
+        </header>
+      )}
 
       {children}
 
-      <footer className="px-5 pb-14 pt-10">
-        <div className="journal-rule">
-          <span />
-        </div>
-        <p className="journal-serif text-center text-lg italic">{settings.title}</p>
-        <p className="mt-1 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()}
-        </p>
-      </footer>
+      {reader ? null : (
+        <footer className="px-5 pb-14 pt-10">
+          <div className="journal-rule">
+            <span />
+          </div>
+          <p className="journal-serif text-center text-lg italic">{settings.title}</p>
+          <p className="mt-1 text-center text-xs text-muted-foreground">
+            © {new Date().getFullYear()}
+          </p>
+        </footer>
+      )}
+
     </div>
   );
 }
