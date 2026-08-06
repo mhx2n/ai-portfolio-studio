@@ -18,13 +18,13 @@ function readFence(children: React.ReactNode) {
   return { lang, text };
 }
 
-/** Read-only markdown renderer. Raw HTML is intentionally not enabled. */
+/** Read-only markdown renderer with sanitized raw HTML support. */
 export function Markdown({ children }: { children: string }) {
   return (
     <div className="prose-blog">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight]}
+        rehypePlugins={[rehypeRaw, [rehypeSanitize, blogHtmlSchema], rehypeHighlight]}
         components={{
           pre: ({ children: kids, ...rest }) => {
             const fence = readFence(kids);
