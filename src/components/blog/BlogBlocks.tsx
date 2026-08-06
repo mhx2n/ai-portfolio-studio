@@ -176,6 +176,12 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
   const size = get("size", "full");
   const align = get("align", "left");
   const captionPos = get("caption_pos", "bottom");
+
+  if (lang === "html") {
+    const html = source.replace(/^\s*(?:[a-z_][\w-]*\s*:\s*.*\n)*\s*/i, "") || source;
+    return <RawHtml>{html.trim() ? html : source}</RawHtml>;
+  }
+
   const pickedIcon = PICK_ICONS[get("icon").toLowerCase()];
   const Figure = (props: { caption: string; children: React.ReactNode }) => (
     <Frame caption={props.caption} captionPos={captionPos} size={size}>
