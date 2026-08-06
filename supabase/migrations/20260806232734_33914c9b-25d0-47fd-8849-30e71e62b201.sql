@@ -1,0 +1,1 @@
+ALTER TABLE public.blog_settings ADD COLUMN IF NOT EXISTS bg text NOT NULL DEFAULT 'cream';

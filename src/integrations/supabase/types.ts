@@ -65,6 +65,7 @@ export type Database = {
       blog_settings: {
         Row: {
           accent: string
+          bg: string
           description: string
           font: string
           id: boolean
@@ -74,6 +75,7 @@ export type Database = {
         }
         Insert: {
           accent?: string
+          bg?: string
           description?: string
           font?: string
           id?: boolean
@@ -83,6 +85,7 @@ export type Database = {
         }
         Update: {
           accent?: string
+          bg?: string
           description?: string
           font?: string
           id?: boolean
