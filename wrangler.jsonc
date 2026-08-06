@@ -3,5 +3,6 @@
   "name": "ai-portfolio-studio",
   "pages_build_output_dir": "./dist",
   "compatibility_date": "2026-08-05",
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": ["nodejs_compat"],
+  "upload_source_maps": true
 }
