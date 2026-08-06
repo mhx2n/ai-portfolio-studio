@@ -101,12 +101,15 @@ export const SIZEABLE_LANGS = [
   "columns",
   "cards",
   "banner",
+  "mosaic",
+  "paper",
+  "decor",
 ];
 
 /** Alignment meta key (`align:`). */
 export type BlockAlign = "left" | "center" | "right";
 
-export const ALIGNABLE_LANGS = ["columns", "cards", "banner"];
+export const ALIGNABLE_LANGS = ["columns", "cards", "banner", "paper", "decor"];
 
 export function canAlign(lang: string | null) {
   return !!lang && ALIGNABLE_LANGS.includes(lang);
@@ -144,6 +147,9 @@ const LABELS: Record<string, string> = {
   columns: "কলাম",
   cards: "কার্ড গ্রিড",
   banner: "ব্যানার হেডিং",
+  mosaic: "মোজাইক (৩ ছবি/ভিডিও)",
+  paper: "এসথেটিক বক্স",
+  decor: "সাজসজ্জা (এরো/স্ক্রিবল)",
   divider: "ডিভাইডার",
   spacer: "ফাঁকা জায়গা",
   html: "HTML / কাস্টম",
@@ -221,7 +227,7 @@ export function writeCaptionSize(source: string, size: CaptionSize): string {
 }
 
 /** Blocks that support a caption line. */
-export const CAPTIONABLE_LANGS = ["video", "audio", "embed", "gallery"];
+export const CAPTIONABLE_LANGS = ["video", "audio", "embed", "gallery", "mosaic"];
 export function canCaption(lang: string | null) {
   return !!lang && CAPTIONABLE_LANGS.includes(lang);
 }
@@ -246,7 +252,7 @@ export const BLOCK_ICONS = [
 ] as const;
 export type BlockIcon = (typeof BLOCK_ICONS)[number];
 
-export const ICONABLE_LANGS = ["callout", "info", "banner", "button", "telegram", "quote", "cards"];
+export const ICONABLE_LANGS = ["callout", "info", "banner", "button", "telegram", "quote", "cards", "paper"];
 export function canIcon(lang: string | null) {
   return !!lang && ICONABLE_LANGS.includes(lang);
 }
