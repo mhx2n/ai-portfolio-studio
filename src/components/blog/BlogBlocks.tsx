@@ -500,3 +500,65 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
 
   return null;
 }
+
+/** Hand-drawn style decorative marks (arrows, scribbles, torn paper strip, sparkle). */
+function DecorArt({ kind }: { kind: string }) {
+  const stroke = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 9,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+  if (kind === "torn") {
+    return (
+      <svg viewBox="0 0 300 60" preserveAspectRatio="none" className="blog-decor-svg">
+        <path
+          d="M2 14 Q20 4 40 12 T80 10 T120 16 T160 8 T200 15 T240 9 T298 14 L296 46 Q270 56 240 48 T190 52 T150 44 T110 53 T70 45 T30 52 L4 46 Z"
+          fill="currentColor"
+          opacity="0.14"
+        />
+      </svg>
+    );
+  }
+  if (kind === "sparkle") {
+    return (
+      <svg viewBox="0 0 100 100" className="blog-decor-svg">
+        <path d="M50 4 L57 43 L96 50 L57 57 L50 96 L43 57 L4 50 L43 43 Z" fill="currentColor" opacity="0.35" />
+      </svg>
+    );
+  }
+  if (kind === "scribble") {
+    return (
+      <svg viewBox="0 0 200 60" className="blog-decor-svg">
+        <path d="M6 40 C40 6 60 54 92 24 S150 6 194 34" {...stroke} />
+      </svg>
+    );
+  }
+  if (kind === "arrow-down") {
+    return (
+      <svg viewBox="0 0 120 160" className="blog-decor-svg">
+        <path d="M20 12 C90 30 96 76 44 104" {...stroke} />
+        <path d="M22 78 L44 106 L74 92" {...stroke} />
+      </svg>
+    );
+  }
+  if (kind === "arrow-right") {
+    return (
+      <svg viewBox="0 0 180 90" className="blog-decor-svg">
+        <path d="M10 66 C60 18 116 20 166 44" {...stroke} />
+        <path d="M136 18 L168 44 L138 66" {...stroke} />
+      </svg>
+    );
+  }
+  // arrow-curl (default): looping hand-drawn arrow like the reference sheet
+  return (
+    <svg viewBox="0 0 160 210" className="blog-decor-svg">
+      <path
+        d="M118 18 C56 6 24 52 62 72 C104 94 40 108 30 84 C22 64 62 74 88 118 C104 146 92 168 74 186"
+        {...stroke}
+      />
+      <path d="M48 158 L74 190 L104 172" {...stroke} />
+    </svg>
+  );
+}
