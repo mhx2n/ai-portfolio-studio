@@ -240,16 +240,20 @@
   }
   .prose-blog table {
     width: 100%;
+    max-width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
     font-size: 0.85rem;
-    display: block;
-    overflow-x: auto;
   }
   .prose-blog th,
   .prose-blog td {
     border: 1px solid var(--border);
     padding: 0.5rem 0.7rem;
     text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
   }
   .prose-blog th {
     background: color-mix(in oklab, var(--muted) 60%, transparent);
@@ -257,21 +261,37 @@
 
   /* ---- advanced blog blocks ---- */
   .prose-blog .blog-table-wrap {
-    overflow-x: auto;
+    max-width: 100%;
     border-radius: 0.9rem;
     border: 1px solid var(--border);
-    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
   }
   .prose-blog .blog-table-wrap table {
-    display: table;
     border: 0;
-    min-width: 30rem;
   }
   .prose-blog .blog-table-wrap th,
   .prose-blog .blog-table-wrap td {
     border-left: 0;
     border-right: 0;
   }
+  .prose-blog .blog-html > :first-child {
+    margin-top: 0;
+  }
+  .prose-blog .blog-html img,
+  .prose-blog .blog-html iframe,
+  .prose-blog .blog-html video {
+    max-width: 100%;
+  }
+  @media (max-width: 480px) {
+    .prose-blog table {
+      font-size: 0.78rem;
+    }
+    .prose-blog th,
+    .prose-blog td {
+      padding: 0.4rem 0.45rem;
+    }
+  }
+
 
   .blog-block {
     margin: 1.6em 0;
