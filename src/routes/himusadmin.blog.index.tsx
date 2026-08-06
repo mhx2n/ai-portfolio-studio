@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import {
   BLOG_ACCENTS,
+  BLOG_BACKGROUNDS,
   BLOG_FONTS,
   BLOG_LAYOUTS,
   formatDate,
@@ -47,7 +48,7 @@ function BlogAdmin() {
       const [posts, roleCheck, cfg] = await Promise.all([
         supabase.from("blog_posts").select("*").order("updated_at", { ascending: false }),
         supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }),
-        supabase.from("blog_settings").select("title, description, accent, font, layout").maybeSingle(),
+        supabase.from("blog_settings").select("title, description, accent, font, layout, bg").maybeSingle(),
       ]);
       if (!alive) return;
       if (posts.error) toast.error("পোস্ট লোড করা যায়নি।");
@@ -242,6 +243,26 @@ function BlogAdmin() {
                   ))}
                 </select>
               </label>
+              <div className="text-xs font-medium sm:col-span-2">
+                ব্যাকগ্রাউন্ড রঙ
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {BLOG_BACKGROUNDS.map((b) => (
+                    <button
+                      key={b.id}
+                      type="button"
+                      title={b.label}
+                      aria-label={b.label}
+                      onClick={() => set("bg", b.id)}
+                      style={{ background: b.swatch }}
+                      className={`size-8 rounded-lg border-2 transition-transform ${
+                        (settings.bg ?? "cream") === b.id
+                          ? "scale-110 border-foreground"
+                          : "border-border"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
               <div className="text-xs font-medium">
                 অ্যাকসেন্ট রঙ
                 <div className="mt-2 flex flex-wrap gap-2">

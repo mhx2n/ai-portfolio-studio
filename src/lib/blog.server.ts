@@ -27,13 +27,14 @@ const DEFAULT_SETTINGS: BlogSettings = {
   accent: "#6ee7f9",
   font: "space-grotesk",
   layout: "list",
+  bg: "cream",
 };
 
 export async function loadBlogSettings(): Promise<BlogSettings> {
   const supabase = publicClient();
   const { data } = await supabase
     .from("blog_settings")
-    .select("title, description, accent, font, layout")
+    .select("title, description, accent, font, layout, bg")
     .maybeSingle();
   return (data as BlogSettings | null) ?? DEFAULT_SETTINGS;
 }
