@@ -16,6 +16,8 @@ import {
   Lightbulb,
   Link as LinkIcon,
   MapPin,
+  Maximize2,
+  Move,
   Pencil,
   Play,
   Rocket,
