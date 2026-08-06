@@ -38,7 +38,7 @@ export function RichText({
           ),
         }}
       >
-        {colorizeMarkdown(children ?? "")}
+        {colorizeMarkdown(expandBlogSyntax(children ?? ""))}
       </ReactMarkdown>
     </Wrapper>
   );
