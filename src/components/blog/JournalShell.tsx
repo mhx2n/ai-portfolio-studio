@@ -2,13 +2,19 @@ import { Link } from "@tanstack/react-router";
 import { fontStack } from "@/lib/blog-types";
 import type { BlogSettings } from "@/lib/blog-types";
 
-/** Shared editorial chrome (sticky brand bar + footer) for the public blog. */
+/**
+ * Shared editorial chrome (sticky brand bar + footer) for the public blog.
+ * `reader` hides every navigation affordance so a shared post link shows
+ * nothing but the post itself.
+ */
 export function JournalShell({
   settings,
   children,
+  reader = false,
 }: {
   settings: BlogSettings;
   children: React.ReactNode;
+  reader?: boolean;
 }) {
   return (
     <div
@@ -21,17 +27,25 @@ export function JournalShell({
       }
     >
       <header className="journal-bar">
-        <Link to="/blog" className="journal-brand truncate">
-          {settings.title}
-        </Link>
-        <nav className="flex shrink-0 items-center gap-4">
-          <Link to="/blog" className="journal-navlink">
-            Journal
+        {reader ? (
+          <span className="journal-brand truncate">{settings.title}</span>
+        ) : (
+          <Link to="/blog" className="journal-brand truncate">
+            {settings.title}
           </Link>
-          <Link to="/" className="journal-navlink hidden sm:inline">
-            Home
-          </Link>
-        </nav>
+        )}
+        {reader ? (
+          <span className="journal-navlink shrink-0">Journal</span>
+        ) : (
+          <nav className="flex shrink-0 items-center gap-4">
+            <Link to="/blog" className="journal-navlink">
+              Journal
+            </Link>
+            <Link to="/" className="journal-navlink hidden sm:inline">
+              Home
+            </Link>
+          </nav>
+        )}
       </header>
 
       {children}

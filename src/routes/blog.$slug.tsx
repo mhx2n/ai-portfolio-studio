@@ -1,5 +1,6 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Eye } from "lucide-react";
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { Eye } from "lucide-react";
+
 import { getBlogPost } from "@/lib/blog.functions";
 import { formatDate, readingMinutes } from "@/lib/blog-types";
 import { mediaUrl } from "@/lib/portfolio-types";
@@ -41,9 +42,6 @@ function PostNotFound() {
         <p className="mt-3 text-sm text-muted-foreground">
           লিংকটি ভুল হতে পারে, অথবা পোস্টটি এখনো প্রকাশ করা হয়নি।
         </p>
-        <Link to="/blog" className="journal-kicker mt-7 inline-flex items-center gap-2">
-          <ArrowLeft className="size-3.5" /> back to the journal
-        </Link>
       </div>
     </div>
   );
@@ -54,7 +52,8 @@ function BlogPostPage() {
   if (!post) return null;
 
   return (
-    <JournalShell settings={settings}>
+    <JournalShell settings={settings} reader>
+
       <main className="px-5">
         <article className="mx-auto max-w-2xl pt-12 sm:pt-16">
           <header className="text-center">
@@ -93,11 +92,8 @@ function BlogPostPage() {
             </p>
           ) : null}
 
-          <div className="mt-10 border-t pt-8 text-center">
-            <Link to="/blog" className="journal-kicker inline-flex items-center gap-2">
-              <ArrowLeft className="size-3.5" /> back to the journal
-            </Link>
-          </div>
+          <div className="mt-10 border-t pt-8" />
+
         </article>
       </main>
     </JournalShell>
