@@ -91,11 +91,8 @@ function BlogPostPage() {
             </p>
           ) : null}
 
-          <div className="mt-10 border-t pt-8 text-center">
-            <Link to="/blog" className="journal-kicker inline-flex items-center gap-2">
-              <ArrowLeft className="size-3.5" /> back to the journal
-            </Link>
-          </div>
+          <div className="mt-10 border-t pt-8" />
+
         </article>
       </main>
     </JournalShell>
