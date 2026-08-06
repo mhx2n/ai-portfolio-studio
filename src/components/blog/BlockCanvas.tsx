@@ -40,12 +40,15 @@ import {
   readAlign,
   readCaption,
   readCaptionPos,
+  readCaptionSize,
+
   readIcon,
   readWidth,
   serializeBlocks,
   writeAlign,
   writeCaption,
   writeCaptionPos,
+  writeCaptionSize,
   writeIcon,
   writeWidth,
   readFloat,
@@ -234,6 +237,7 @@ export function BlockCanvas({
         const icon = readIcon(block.source);
         const caption = readCaption(block.source);
         const captionPos = readCaptionPos(block.source);
+        const captionSize = readCaptionSize(block.source);
         const side = readFloat(block.source);
         const nudgeX = readNudgeX(block.source);
         const nudgeY = readNudgeY(block.source);
@@ -468,6 +472,28 @@ export function BlockCanvas({
                         </button>
                       ))}
                     </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">
+                        লেখার সাইজ
+                      </span>
+                      {(["sm", "md", "lg", "xl"] as const).map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => update(block.uid, writeCaptionSize(block.source, s))}
+                          className={`rounded-full px-2.5 py-0.5 text-[11px] uppercase transition-colors ${
+                            captionSize === s
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="pl-[4.5rem] text-[10px] text-muted-foreground">
+                      মার্কডাউন কাজ করবে: **বোল্ড**, *ইটালিক*, {"{{red|লেখা}}"}, ==হাইলাইট==
+                    </p>
                   </div>
                 ) : null}
 

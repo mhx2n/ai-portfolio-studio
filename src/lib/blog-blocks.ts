@@ -207,6 +207,19 @@ export function writeCaptionPos(source: string, pos: CaptionPos): string {
   return writeMeta(source, "caption_pos", pos === "top" ? "top" : "");
 }
 
+/** Caption text size. */
+export type CaptionSize = "sm" | "md" | "lg" | "xl";
+const CAPTION_SIZES: CaptionSize[] = ["sm", "md", "lg", "xl"];
+
+export function readCaptionSize(source: string): CaptionSize {
+  const raw = readMeta(source, "caption_size").toLowerCase() as CaptionSize;
+  return CAPTION_SIZES.includes(raw) ? raw : "md";
+}
+
+export function writeCaptionSize(source: string, size: CaptionSize): string {
+  return writeMeta(source, "caption_size", size === "md" ? "" : size);
+}
+
 /** Blocks that support a caption line. */
 export const CAPTIONABLE_LANGS = ["video", "audio", "embed", "gallery"];
 export function canCaption(lang: string | null) {

@@ -96,15 +96,21 @@ function embedUrl(url: string): string | null {
 function Frame({
   caption,
   captionPos,
+  captionSize,
   size,
   children,
 }: {
   caption: string;
   captionPos: string;
+  captionSize?: string;
   size: string;
   children: React.ReactNode;
 }) {
-  const cap = caption ? <figcaption className="blog-caption">{caption}</figcaption> : null;
+  const cap = caption ? (
+    <figcaption className="blog-caption" data-cap={captionSize || "md"}>
+      <RichText as="div">{caption}</RichText>
+    </figcaption>
+  ) : null;
   return (
     <figure className="blog-block" data-size={size}>
       {captionPos === "top" ? cap : null}
@@ -177,6 +183,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
   const size = get("size", "full");
   const align = get("align", "left");
   const captionPos = get("caption_pos", "bottom");
+  const captionSize = get("caption_size", "md").toLowerCase();
 
   if (lang === "html") {
     const html = source.replace(/^\s*(?:[a-z_][\w-]*\s*:\s*.*\n)*\s*/i, "") || source;
@@ -185,7 +192,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
 
   const pickedIcon = PICK_ICONS[get("icon").toLowerCase()];
   const Figure = (props: { caption: string; children: React.ReactNode }) => (
-    <Frame caption={props.caption} captionPos={captionPos} size={size}>
+    <Frame caption={props.caption} captionPos={captionPos} captionSize={captionSize} size={size}>
       {props.children}
     </Frame>
   );
