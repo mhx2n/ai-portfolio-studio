@@ -1,0 +1,47 @@
+import { defaultSchema } from "rehype-sanitize";
+
+/** Sanitize schema that keeps layout-friendly HTML (class/style/width) but drops scripts. */
+export const blogHtmlSchema = {
+  ...defaultSchema,
+  attributes: {
+    ...defaultSchema.attributes,
+    "*": [
+      ...(defaultSchema.attributes?.["*"] ?? []),
+      "className",
+      "class",
+      "style",
+      "id",
+      "align",
+      "width",
+      "height",
+      "colSpan",
+      "rowSpan",
+      "colspan",
+      "rowspan",
+      "dataSize",
+      "data*",
+    ],
+    a: [...(defaultSchema.attributes?.["a"] ?? []), "target", "rel"],
+    img: [...(defaultSchema.attributes?.["img"] ?? []), "loading", "decoding", "src", "alt"],
+    iframe: ["src", "title", "allow", "allowFullScreen", "loading", "frameBorder"],
+    video: ["src", "controls", "poster", "playsInline", "preload", "loop", "muted", "autoPlay"],
+    audio: ["src", "controls", "preload", "loop"],
+    source: ["src", "type"],
+  },
+  tagNames: [
+    ...(defaultSchema.tagNames ?? []),
+    "iframe",
+    "video",
+    "audio",
+    "source",
+    "figure",
+    "figcaption",
+    "mark",
+    "small",
+    "u",
+    "details",
+    "summary",
+    "section",
+    "aside",
+  ],
+};

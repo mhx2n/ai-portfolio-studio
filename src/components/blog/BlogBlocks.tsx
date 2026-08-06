@@ -19,6 +19,7 @@ import {
   Sparkle,
 } from "lucide-react";
 import { mediaUrl } from "@/lib/portfolio-types";
+import { RawHtml } from "./RawHtml";
 
 /** Known custom block languages usable as ```name fences inside post markdown. */
 export const BLOG_BLOCK_LANGS = [
@@ -37,6 +38,7 @@ export const BLOG_BLOCK_LANGS = [
   "banner",
   "divider",
   "spacer",
+  "html",
 ] as const;
 
 export type BlockLang = (typeof BLOG_BLOCK_LANGS)[number];
@@ -174,6 +176,12 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
   const size = get("size", "full");
   const align = get("align", "left");
   const captionPos = get("caption_pos", "bottom");
+
+  if (lang === "html") {
+    const html = source.replace(/^\s*(?:[a-z_][\w-]*\s*:\s*.*\n)*\s*/i, "") || source;
+    return <RawHtml>{html.trim() ? html : source}</RawHtml>;
+  }
+
   const pickedIcon = PICK_ICONS[get("icon").toLowerCase()];
   const Figure = (props: { caption: string; children: React.ReactNode }) => (
     <Frame caption={props.caption} captionPos={captionPos} size={size}>

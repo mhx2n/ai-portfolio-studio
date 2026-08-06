@@ -2,8 +2,11 @@ import { isValidElement } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import "highlight.js/styles/github-dark.css";
 import { BlogBlock, isBlockLang } from "./BlogBlocks";
+import { blogHtmlSchema } from "./html-schema";
 
 /** Pulls the fence language + raw text out of a <pre><code> pair. */
 function readFence(children: React.ReactNode) {
@@ -15,13 +18,13 @@ function readFence(children: React.ReactNode) {
   return { lang, text };
 }
 
-/** Read-only markdown renderer. Raw HTML is intentionally not enabled. */
+/** Read-only markdown renderer with sanitized raw HTML support. */
 export function Markdown({ children }: { children: string }) {
   return (
     <div className="prose-blog">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight]}
+        rehypePlugins={[rehypeRaw, [rehypeSanitize, blogHtmlSchema], rehypeHighlight]}
         components={{
           pre: ({ children: kids, ...rest }) => {
             const fence = readFence(kids);

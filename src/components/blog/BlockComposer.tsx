@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   AudioLines,
   Check,
+  Code2,
   Columns3,
   Frame,
   Heading,
@@ -349,7 +350,26 @@ const BLOCKS: BlockDef[] = [
     ],
     build: (v) => fence("spacer", { height: v['height'] || "48" }),
   },
+  {
+    id: "html",
+    label: "HTML / কাস্টম",
+    icon: Code2,
+    desc: "নিজের HTML + মার্কডাউন দিয়ে যেকোনোভাবে সাজান",
+    fields: [
+      {
+        name: "code",
+        label: "HTML কোড",
+        kind: "textarea",
+        rows: 8,
+        placeholder:
+          '<div style="display:flex;gap:12px;align-items:center">\n  <img src="https://…/pic.jpg" width="120" />\n  <p>আপনার লেখা…</p>\n</div>',
+        hint: "class, style, iframe, video, table — সব চলবে। স্ক্রিপ্ট বাদ যাবে।",
+      },
+    ],
+    build: (v) => `\n\`\`\`html\n${(v['code'] ?? "").trim()}\n\`\`\`\n\n`,
+  },
 ];
+
 
 export function BlockComposer({
   userId,

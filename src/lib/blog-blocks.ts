@@ -146,6 +146,7 @@ const LABELS: Record<string, string> = {
   banner: "ব্যানার হেডিং",
   divider: "ডিভাইডার",
   spacer: "ফাঁকা জায়গা",
+  html: "HTML / কাস্টম",
 };
 
 export function blockLabel(block: CanvasBlock) {
