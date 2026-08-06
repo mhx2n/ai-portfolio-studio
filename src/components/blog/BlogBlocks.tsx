@@ -334,7 +334,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
         {rows.map((parts, i) => (
           <div key={i} className="blog-stat">
             <RichText as="span" className="blog-stat-value">{parts[1] ?? ""}</RichText>
-            <RichText as="span" className="blog-stat-label">{parts[0]}</RichText>
+            <RichText as="span" className="blog-stat-label">{parts[0] ?? ""}</RichText>
           </div>
         ))}
       </div>
@@ -377,7 +377,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
       <div className="blog-cards" data-cols={String(cols)} data-size={size} data-align={align}>
         {rows.map((parts, i) => (
           <div key={i} className="blog-card">
-            <RichText className="blog-card-title">{parts[0]}</RichText>
+            <RichText className="blog-card-title">{parts[0] ?? ""}</RichText>
             {parts[1] ? <RichText className="blog-card-body">{parts[1]}</RichText> : null}
           </div>
         ))}
