@@ -360,9 +360,6 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
   if (lang === "banner") {
     const title = get("title") || body;
     if (!title.trim()) return null;
-  if (lang === "banner") {
-    const title = get("title") || body;
-    if (!title.trim()) return null;
     const Icon = pickedIcon;
     return (
       <div className={`blog-banner blog-banner-${get("style", "solid")}`} data-size={size} data-align={align}>
