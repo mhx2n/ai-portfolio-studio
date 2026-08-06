@@ -224,7 +224,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
 
   if (lang === "callout" || lang === "info") {
     const kind = get("type", "info").toLowerCase();
-    const Icon = CALLOUT_ICONS[kind] ?? Info;
+    const Icon = pickedIcon ?? CALLOUT_ICONS[kind] ?? Info;
     const title = get("title");
     return (
       <aside className={`blog-callout blog-callout-${CALLOUT_ICONS[kind] ? kind : "info"}`} data-size={size}>
@@ -239,14 +239,16 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
 
   if (lang === "quote") {
     const author = get("author");
+    const Icon = pickedIcon ?? Quote;
     return (
       <blockquote className="blog-quote" data-size={size}>
-        <Quote className="blog-quote-icon" aria-hidden />
+        <Icon className="blog-quote-icon" aria-hidden />
         <p>{body || get("text")}</p>
         {author ? <cite>— {author}</cite> : null}
       </blockquote>
     );
   }
+
 
   if (lang === "button" || lang === "telegram") {
     const isTg = lang === "telegram";
