@@ -15,6 +15,7 @@ import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as HimusadminIndexRouteImport } from './routes/himusadmin.index'
 import { Route as HimusadminIdRouteImport } from './routes/himusadmin.$id'
+import { Route as HimusadminCodesRouteImport } from './routes/himusadmin.codes'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as HimusadminBlogIndexRouteImport } from './routes/himusadmin.blog.index'
 import { Route as HimusadminBlogIdRouteImport } from './routes/himusadmin.blog.$id'
@@ -50,6 +51,11 @@ const HimusadminIdRoute = HimusadminIdRouteImport.update({
   path: '/himusadmin/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HimusadminCodesRoute = HimusadminCodesRouteImport.update({
+  id: '/himusadmin/codes',
+  path: '/himusadmin/codes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PSlugRoute = PSlugRouteImport.update({
   id: '/p/$slug',
   path: '/p/$slug',
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/himusadmin/$id': typeof HimusadminIdRoute
+  '/himusadmin/codes': typeof HimusadminCodesRoute
   '/p/$slug': typeof PSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/himusadmin/': typeof HimusadminIndexRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/himusadmin/$id': typeof HimusadminIdRoute
+  '/himusadmin/codes': typeof HimusadminCodesRoute
   '/p/$slug': typeof PSlugRoute
   '/blog': typeof BlogIndexRoute
   '/himusadmin': typeof HimusadminIndexRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/himusadmin/$id': typeof HimusadminIdRoute
+  '/himusadmin/codes': typeof HimusadminCodesRoute
   '/p/$slug': typeof PSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/himusadmin/': typeof HimusadminIndexRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blog/$slug'
     | '/himusadmin/$id'
+    | '/himusadmin/codes'
     | '/p/$slug'
     | '/blog/'
     | '/himusadmin/'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blog/$slug'
     | '/himusadmin/$id'
+    | '/himusadmin/codes'
     | '/p/$slug'
     | '/blog'
     | '/himusadmin'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blog/$slug'
     | '/himusadmin/$id'
+    | '/himusadmin/codes'
     | '/p/$slug'
     | '/blog/'
     | '/himusadmin/'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BlogSlugRoute: typeof BlogSlugRoute
   HimusadminIdRoute: typeof HimusadminIdRoute
+  HimusadminCodesRoute: typeof HimusadminCodesRoute
   PSlugRoute: typeof PSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   HimusadminIndexRoute: typeof HimusadminIndexRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HimusadminIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/himusadmin/codes': {
+      id: '/himusadmin/codes'
+      path: '/himusadmin/codes'
+      fullPath: '/himusadmin/codes'
+      preLoaderRoute: typeof HimusadminCodesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/$slug': {
       id: '/p/$slug'
       path: '/p/$slug'
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BlogSlugRoute: BlogSlugRoute,
   HimusadminIdRoute: HimusadminIdRoute,
+  HimusadminCodesRoute: HimusadminCodesRoute,
   PSlugRoute: PSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   HimusadminIndexRoute: HimusadminIndexRoute,
@@ -250,13 +271,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
