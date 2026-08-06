@@ -253,3 +253,57 @@ export function readCaption(source: string) {
 export function writeCaption(source: string, caption: string) {
   return writeMeta(source, "caption", caption);
 }
+
+/* ---------- Free placement: float side, nudge, rotation ---------- */
+
+export type BlockFloat = "none" | "left" | "right";
+
+export function readFloat(source: string): BlockFloat {
+  const value = readMeta(source, "float").toLowerCase();
+  return value === "left" || value === "right" ? value : "none";
+}
+
+export function writeFloat(source: string, side: BlockFloat): string {
+  return writeMeta(source, "float", side === "none" ? "" : side);
+}
+
+/** Horizontal nudge in percent of the column (-40..40). */
+export function readNudgeX(source: string): number {
+  const raw = Number(readMeta(source, "x"));
+  if (!Number.isFinite(raw)) return 0;
+  return Math.min(40, Math.max(-40, Math.round(raw)));
+}
+
+export function writeNudgeX(source: string, x: number): string {
+  const v = Math.min(40, Math.max(-40, Math.round(x)));
+  return writeMeta(source, "x", v === 0 ? "" : String(v));
+}
+
+/** Vertical nudge in pixels (-120..120). */
+export function readNudgeY(source: string): number {
+  const raw = Number(readMeta(source, "y"));
+  if (!Number.isFinite(raw)) return 0;
+  return Math.min(120, Math.max(-120, Math.round(raw)));
+}
+
+export function writeNudgeY(source: string, y: number): string {
+  const v = Math.min(120, Math.max(-120, Math.round(y)));
+  return writeMeta(source, "y", v === 0 ? "" : String(v));
+}
+
+/** Playful tilt in degrees (-12..12). */
+export function readRotate(source: string): number {
+  const raw = Number(readMeta(source, "rotate"));
+  if (!Number.isFinite(raw)) return 0;
+  return Math.min(12, Math.max(-12, Math.round(raw)));
+}
+
+export function writeRotate(source: string, deg: number): string {
+  const v = Math.min(12, Math.max(-12, Math.round(deg)));
+  return writeMeta(source, "rotate", v === 0 ? "" : String(v));
+}
+
+/** Every block type can be freely placed. */
+export function canPlace(lang: string | null) {
+  return true;
+}
