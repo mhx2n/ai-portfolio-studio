@@ -137,14 +137,29 @@ const PICK_ICONS: Record<string, typeof Info> = {
   sparkle: Sparkle,
 };
 
-/** Wraps a block so the author-chosen width (in %) applies to any block type. */
+/** Wraps a block so author-chosen width, float side, nudge and tilt apply to any block. */
 export function BlogBlock({ lang, source }: { lang: BlockLang; source: string }) {
-  const width = Number(/^[ \t]*width[ \t]*:[ \t]*(\d+)/im.exec(source)?.[1] ?? "100");
-  const w = Number.isFinite(width) ? Math.min(100, Math.max(30, width)) : 100;
+  const num = (key: string, min: number, max: number, fallback: number) => {
+    const raw = Number(new RegExp(`^[ \\t]*${key}[ \\t]*:[ \\t]*(-?\\d+)`, "im").exec(source)?.[1]);
+    return Number.isFinite(raw) ? Math.min(max, Math.max(min, raw)) : fallback;
+  };
+  const w = num("width", 30, 100, 100);
+  const x = num("x", -40, 40, 0);
+  const y = num("y", -120, 120, 0);
+  const rotate = num("rotate", -12, 12, 0);
+  const floatRaw = /^[ \t]*float[ \t]*:[ \t]*(left|right)/im.exec(source)?.[1];
+  const side = floatRaw === "left" || floatRaw === "right" ? floatRaw : "none";
   const inner = <BlockBody lang={lang} source={source} />;
-  if (w >= 100) return inner;
+  if (w >= 100 && !x && !y && !rotate && side === "none") return inner;
+  const transform = [x ? `translateX(${x}%)` : "", y ? `translateY(${y}px)` : "", rotate ? `rotate(${rotate}deg)` : ""]
+    .filter(Boolean)
+    .join(" ");
   return (
-    <div className="blog-width" style={{ width: `${w}%` }}>
+    <div
+      className="blog-place"
+      data-float={side}
+      style={{ width: w >= 100 ? undefined : `${w}%`, ...(transform ? { transform } : {}) }}
+    >
       {inner}
     </div>
   );
