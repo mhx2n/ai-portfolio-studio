@@ -305,5 +305,5 @@ export function writeRotate(source: string, deg: number): string {
 
 /** Every block type can be freely placed. */
 export function canPlace(lang: string | null) {
-  return true;
+  return lang !== null;
 }
