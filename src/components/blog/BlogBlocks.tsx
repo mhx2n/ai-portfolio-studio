@@ -96,15 +96,21 @@ function embedUrl(url: string): string | null {
 function Frame({
   caption,
   captionPos,
+  captionSize,
   size,
   children,
 }: {
   caption: string;
   captionPos: string;
+  captionSize?: string;
   size: string;
   children: React.ReactNode;
 }) {
-  const cap = caption ? <figcaption className="blog-caption">{caption}</figcaption> : null;
+  const cap = caption ? (
+    <figcaption className="blog-caption" data-cap={captionSize || "md"}>
+      <RichText as="div">{caption}</RichText>
+    </figcaption>
+  ) : null;
   return (
     <figure className="blog-block" data-size={size}>
       {captionPos === "top" ? cap : null}
