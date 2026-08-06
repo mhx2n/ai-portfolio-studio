@@ -62,7 +62,7 @@ export function Markdown({ children }: { children: string }) {
           ),
         }}
       >
-        {colorizeMarkdown(children ?? "")}
+        {colorizeMarkdown(expandBlogSyntax(children ?? ""))}
       </ReactMarkdown>
     </div>
   );
