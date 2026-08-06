@@ -8,6 +8,7 @@ import "highlight.js/styles/github-dark.css";
 import { BlogBlock, isBlockLang } from "./BlogBlocks";
 import { blogHtmlSchema } from "./html-schema";
 import { colorizeMarkdown } from "@/lib/blog-color";
+import { expandBlogSyntax } from "@/lib/blog-markdown";
 
 /** Flattens any nested React children (e.g. syntax-highlight spans) back to plain text. */
 function toText(node: React.ReactNode): string {
