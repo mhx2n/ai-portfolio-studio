@@ -12,10 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Let the Pages preset own the output layout. On Cloudflare it emits
-  // `dist/_worker.js` alongside the public assets for Pages advanced mode.
+  // Vercel serverless target for TanStack Start SSR.
   nitro: {
-    preset: "cloudflare-pages",
+    preset: "vercel",
   },
 });
 
