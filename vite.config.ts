@@ -12,9 +12,10 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Vercel serverless target for TanStack Start SSR.
+  // Cloudflare Pages requires the SSR worker at dist/_worker.js.
+  // Keep this explicit so CI cannot auto-detect a different deployment target.
   nitro: {
-    preset: "vercel",
+    preset: "cloudflare-pages",
   },
 });
 
