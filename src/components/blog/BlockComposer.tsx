@@ -228,6 +228,116 @@ const BLOCKS: BlockDef[] = [
         caption: v['caption'] ?? "",
       }),
   },
+  {
+    id: "columns",
+    label: "কলাম",
+    icon: Columns3,
+    desc: "পাশাপাশি ২/৩ কলামে লেখা সাজানো",
+    fields: [
+      {
+        name: "cols",
+        label: "কলাম সংখ্যা",
+        kind: "select",
+        options: [
+          { value: "2", label: "২ কলাম" },
+          { value: "3", label: "৩ কলাম" },
+        ],
+      },
+      { name: "align", label: "অ্যালাইন", kind: "select", options: ALIGN_OPTIONS },
+      {
+        name: "body",
+        label: "প্রতিটি কলাম --- দিয়ে আলাদা করুন (প্রথম লাইনে # শিরোনাম)",
+        kind: "textarea",
+        rows: 6,
+        placeholder: "# শিরোনাম ১\nএখানে লেখা\n---\n# শিরোনাম ২\nএখানে লেখা",
+      },
+    ],
+    build: (v) =>
+      fence("columns", { cols: v['cols'] || "2", align: v['align'] || "left" }, v['body']),
+  },
+  {
+    id: "cards",
+    label: "কার্ড গ্রিড",
+    icon: SquareStack,
+    desc: "টেক্সট বক্স গ্রিডে সাজানো",
+    fields: [
+      {
+        name: "cols",
+        label: "কলাম সংখ্যা",
+        kind: "select",
+        options: [
+          { value: "2", label: "২ কলাম" },
+          { value: "3", label: "৩ কলাম" },
+        ],
+      },
+      { name: "align", label: "অ্যালাইন", kind: "select", options: ALIGN_OPTIONS },
+      {
+        name: "rows",
+        label: "শিরোনাম | লেখা (প্রতি লাইনে একটি কার্ড)",
+        kind: "textarea",
+        rows: 5,
+        placeholder: "ফিচার ১ | বিস্তারিত লেখা\nফিচার ২ | বিস্তারিত লেখা",
+      },
+    ],
+    build: (v) => fence("cards", { cols: v['cols'] || "2", align: v['align'] || "left" }, v['rows']),
+  },
+  {
+    id: "banner",
+    label: "ব্যানার হেডিং",
+    icon: Heading,
+    desc: "বড় রঙিন হেডিং ব্যান্ড",
+    fields: [
+      { name: "title", label: "শিরোনাম", kind: "text", placeholder: "Add a heading" },
+      { name: "subtitle", label: "সাব-টাইটেল", kind: "text" },
+      {
+        name: "style",
+        label: "স্টাইল",
+        kind: "select",
+        options: [
+          { value: "solid", label: "সলিড" },
+          { value: "outline", label: "আউটলাইন" },
+          { value: "accent", label: "অ্যাকসেন্ট" },
+        ],
+      },
+      { name: "align", label: "অ্যালাইন", kind: "select", options: ALIGN_OPTIONS },
+    ],
+    build: (v) =>
+      fence("banner", {
+        title: v['title'] ?? "",
+        subtitle: v['subtitle'] ?? "",
+        style: v['style'] || "solid",
+        align: v['align'] || "left",
+      }),
+  },
+  {
+    id: "divider",
+    label: "ডিভাইডার",
+    icon: Minus,
+    desc: "সেকশন আলাদা করার লাইন",
+    fields: [
+      {
+        name: "style",
+        label: "স্টাইল",
+        kind: "select",
+        options: [
+          { value: "line", label: "সরু লাইন" },
+          { value: "dotted", label: "ডটেড" },
+          { value: "thick", label: "মোটা" },
+        ],
+      },
+    ],
+    build: (v) => fence("divider", { style: v['style'] || "line" }),
+  },
+  {
+    id: "spacer",
+    label: "ফাঁকা জায়গা",
+    icon: MoveVertical,
+    desc: "দুই সেকশনের মাঝে ফাঁকা স্পেস",
+    fields: [
+      { name: "height", label: "উচ্চতা (px)", kind: "text", placeholder: "48" },
+    ],
+    build: (v) => fence("spacer", { height: v['height'] || "48" }),
+  },
 ];
 
 export function BlockComposer({
