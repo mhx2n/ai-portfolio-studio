@@ -1,5 +1,6 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Eye } from "lucide-react";
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { Eye } from "lucide-react";
+
 import { getBlogPost } from "@/lib/blog.functions";
 import { formatDate, readingMinutes } from "@/lib/blog-types";
 import { mediaUrl } from "@/lib/portfolio-types";
