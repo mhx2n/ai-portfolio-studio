@@ -12,6 +12,9 @@ import {
   MessageSquareQuote,
   Minus,
   MoveVertical,
+  MousePointerClick,
+  Images,
+  StickyNote,
   Plus,
   Send,
   Sigma,
@@ -319,6 +322,120 @@ const BLOCKS: BlockDef[] = [
         subtitle: v['subtitle'] ?? "",
         style: v['style'] || "solid",
         align: v['align'] || "left",
+      }),
+  },
+  {
+    id: "mosaic",
+    label: "মোজাইক (ছবি/ভিডিও)",
+    icon: Images,
+    desc: "৩টি (বা যত চান) ছবি/ভিডিও পাশাপাশি, বড় স্ক্রিনে স্ট্যাগার্ড",
+    fields: [
+      {
+        name: "cols",
+        label: "কতটি পাশাপাশি",
+        kind: "select",
+        options: [
+          { value: "3", label: "৩টি" },
+          { value: "2", label: "২টি" },
+          { value: "4", label: "৪টি" },
+        ],
+      },
+      {
+        name: "stagger",
+        label: "উঁচু-নিচু সাজানো",
+        kind: "select",
+        options: [
+          { value: "on", label: "হ্যাঁ (এসথেটিক)" },
+          { value: "off", label: "না (সমান)" },
+        ],
+      },
+      { name: "upload", label: "ছবি/ভিডিও আপলোড (একাধিক)", kind: "media", multiple: true },
+      {
+        name: "items",
+        label: "অথবা লিংক | ক্যাপশন (প্রতি লাইনে একটি)",
+        kind: "textarea",
+        rows: 4,
+        placeholder: "https://…/1.jpg | Text\nhttps://youtu.be/xxxx | ভিডিও\nhttps://…/3.jpg | Text",
+      },
+      { name: "caption", label: "নিচের ক্যাপশন", kind: "text" },
+    ],
+    build: (v) =>
+      fence(
+        "mosaic",
+        { cols: v['cols'] || "3", stagger: v['stagger'] || "on", caption: v['caption'] ?? "" },
+        [v['upload'] ?? "", v['items'] ?? ""].filter(Boolean).join("\n"),
+      ),
+  },
+  {
+    id: "paper",
+    label: "এসথেটিক বক্স",
+    icon: StickyNote,
+    desc: "নরম শ্যাডোর সাদা বক্স, নিচে ছোট লেবেল",
+    fields: [
+      {
+        name: "style",
+        label: "স্টাইল",
+        kind: "select",
+        options: [
+          { value: "soft", label: "সফট শ্যাডো" },
+          { value: "outline", label: "আউটলাইন" },
+          { value: "torn", label: "টর্ন পেপার" },
+        ],
+      },
+      { name: "align", label: "অ্যালাইন", kind: "select", options: ALIGN_OPTIONS },
+      { name: "title", label: "শিরোনাম", kind: "text" },
+      { name: "body", label: "লেখা (মার্কডাউন চলবে)", kind: "textarea", rows: 4 },
+      { name: "label", label: "নিচের ছোট লেবেল", kind: "text", placeholder: "Text" },
+    ],
+    build: (v) =>
+      fence(
+        "paper",
+        {
+          style: v['style'] || "soft",
+          align: v['align'] || "left",
+          title: v['title'] ?? "",
+          label: v['label'] ?? "",
+        },
+        v['body'],
+      ),
+  },
+  {
+    id: "decor",
+    label: "সাজসজ্জা / এরো",
+    icon: MousePointerClick,
+    desc: "হাতে আঁকা এরো, স্ক্রিবল, টর্ন স্ট্রিপ, স্পার্কল",
+    fields: [
+      {
+        name: "type",
+        label: "ধরন",
+        kind: "select",
+        options: [
+          { value: "arrow-curl", label: "কার্ল এরো (নিচে)" },
+          { value: "arrow-down", label: "এরো নিচের দিকে" },
+          { value: "arrow-right", label: "এরো ডানে" },
+          { value: "scribble", label: "স্ক্রিবল লাইন" },
+          { value: "torn", label: "টর্ন পেপার স্ট্রিপ" },
+          { value: "sparkle", label: "স্পার্কল" },
+        ],
+      },
+      { name: "align", label: "অ্যালাইন", kind: "select", options: ALIGN_OPTIONS },
+      { name: "size", label: "সাইজ (px)", kind: "text", placeholder: "120" },
+      {
+        name: "flip",
+        label: "উল্টানো",
+        kind: "select",
+        options: [
+          { value: "no", label: "না" },
+          { value: "yes", label: "হ্যাঁ" },
+        ],
+      },
+    ],
+    build: (v) =>
+      fence("decor", {
+        type: v['type'] || "arrow-curl",
+        align: v['align'] || "left",
+        size: v['size'] || "120",
+        flip: v['flip'] || "no",
       }),
   },
   {
