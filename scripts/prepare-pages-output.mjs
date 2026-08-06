@@ -1,25 +1,26 @@
-import { cp, mkdir, readdir } from "node:fs/promises";
-import { join } from "node:path";
+import { writeFile, access } from "node:fs/promises";
+import { constants } from "node:fs";
 
 const isLovableSandbox =
   process.env["LOVABLE_SANDBOX"] === "1" || Boolean(process.env["DEV_SERVER__PROJECT_PATH"]);
 
+// Cloudflare Pages re-bundles dist/_worker.js with esbuild and honours the
+// nearest package.json. The repo root sets "sideEffects": false, which makes
+// esbuild drop side-effect-only imports such as `import "../_runtime.mjs"` and
+// breaks SSR at runtime. Emitting a local package.json overrides that.
 if (!isLovableSandbox) {
-  const outputRoot = "dist";
-  const compatibilityRoot = join(outputRoot, "client");
-
-  await mkdir(compatibilityRoot, { recursive: true });
-
-  for (const entry of await readdir(outputRoot, { withFileTypes: true })) {
-    if (entry.name === "client") continue;
-
-    await cp(join(outputRoot, entry.name), join(compatibilityRoot, entry.name), {
-      recursive: entry.isDirectory(),
-      force: true,
-    });
+  const workerDir = "dist/_worker.js";
+  try {
+    await access(`${workerDir}/index.js`, constants.R_OK);
+  } catch {
+    console.error(`Cloudflare Pages output is incomplete: missing ${workerDir}/index.js`);
+    process.exit(1);
   }
 
-  console.log(
-    "Cloudflare Pages compatibility output prepared for both dist and dist/client.",
+  await writeFile(
+    `${workerDir}/package.json`,
+    `${JSON.stringify({ type: "module", sideEffects: true }, null, 2)}\n`,
   );
+
+  console.log("Cloudflare Pages worker prepared: dist/_worker.js/package.json written.");
 }
