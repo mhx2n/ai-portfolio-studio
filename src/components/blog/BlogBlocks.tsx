@@ -183,6 +183,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
   const size = get("size", "full");
   const align = get("align", "left");
   const captionPos = get("caption_pos", "bottom");
+  const captionSize = get("caption_size", "md").toLowerCase();
 
   if (lang === "html") {
     const html = source.replace(/^\s*(?:[a-z_][\w-]*\s*:\s*.*\n)*\s*/i, "") || source;
@@ -191,7 +192,7 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
 
   const pickedIcon = PICK_ICONS[get("icon").toLowerCase()];
   const Figure = (props: { caption: string; children: React.ReactNode }) => (
-    <Frame caption={props.caption} captionPos={captionPos} size={size}>
+    <Frame caption={props.caption} captionPos={captionPos} captionSize={captionSize} size={size}>
       {props.children}
     </Frame>
   );
