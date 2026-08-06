@@ -298,10 +298,25 @@
   }
   .blog-caption {
     margin-top: 0.55rem;
-    font-size: 0.78rem;
+    font-size: 0.98rem;
+    line-height: 1.55;
     text-align: center;
     color: var(--muted-foreground);
   }
+  .blog-caption[data-cap="sm"] {
+    font-size: 0.82rem;
+  }
+  .blog-caption[data-cap="md"] {
+    font-size: 1rem;
+  }
+  .blog-caption[data-cap="lg"] {
+    font-size: 1.25rem;
+  }
+  .blog-caption[data-cap="xl"] {
+    font-size: 1.6rem;
+    line-height: 1.35;
+  }
+
   .blog-frame {
     position: relative;
     aspect-ratio: 16 / 9;
