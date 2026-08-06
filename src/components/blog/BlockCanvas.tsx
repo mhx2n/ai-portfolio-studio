@@ -40,6 +40,8 @@ import {
   readAlign,
   readCaption,
   readCaptionPos,
+  readCaptionSize,
+
   readIcon,
   readWidth,
   serializeBlocks,
