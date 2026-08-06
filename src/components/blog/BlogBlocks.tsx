@@ -100,6 +100,7 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
   const { get, body } = useMemo(() => parseBlock(source), [source]);
   const caption = get("caption");
   const size = get("size", "full");
+  const align = get("align", "left");
   const Figure = (props: { caption: string; children: React.ReactNode }) => (
     <Frame caption={props.caption} size={size}>
       {props.children}
