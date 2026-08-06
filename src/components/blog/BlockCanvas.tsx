@@ -16,6 +16,8 @@ import {
   Lightbulb,
   Link as LinkIcon,
   MapPin,
+  Maximize2,
+  Move,
   Pencil,
   Play,
   Rocket,
@@ -96,7 +98,70 @@ export function BlockCanvas({
   const [selected, setSelected] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
+  const [live, setLive] = useState<string | null>(null);
   const lastRef = useRef(value);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  /** Free drag: moves a block by pointer, writing x% / y px meta. */
+  function startMove(e: React.PointerEvent, block: CanvasBlock) {
+    if (!block.lang) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const baseX = readNudgeX(block.source);
+    const baseY = readNudgeY(block.source);
+    const colWidth = wrapRef.current?.getBoundingClientRect().width || 320;
+    let source = block.source;
+    setLive(block.uid);
+    const onMove = (ev: PointerEvent) => {
+      const dxPct = baseX + ((ev.clientX - startX) / colWidth) * 100;
+      const dyPx = baseY + (ev.clientY - startY);
+      source = writeNudgeY(writeNudgeX(block.source, dxPct), dyPx);
+      setBlocks((prev) => prev.map((b) => (b.uid === block.uid ? { ...b, source } : b)));
+    };
+    const end = () => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", end);
+      el.removeEventListener("pointercancel", end);
+      setLive(null);
+      update(block.uid, source);
+    };
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+  }
+
+  /** Corner handle: resizes width by pointer. */
+  function startResize(e: React.PointerEvent, block: CanvasBlock) {
+    if (!block.lang) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
+    const startX = e.clientX;
+    const base = readWidth(block.source);
+    const colWidth = wrapRef.current?.getBoundingClientRect().width || 320;
+    let source = block.source;
+    setLive(block.uid);
+    const onMove = (ev: PointerEvent) => {
+      const next = base + ((ev.clientX - startX) / colWidth) * 100;
+      source = writeWidth(block.source, next);
+      setBlocks((prev) => prev.map((b) => (b.uid === block.uid ? { ...b, source } : b)));
+    };
+    const end = () => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", end);
+      el.removeEventListener("pointercancel", end);
+      setLive(null);
+      update(block.uid, source);
+    };
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+  }
 
   useEffect(() => {
     if (value === lastRef.current) return;
@@ -160,7 +225,7 @@ export function BlockCanvas({
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1" ref={wrapRef}>
       {blocks.map((block, index) => {
         const isSelected = selected === block.uid;
         const isEditing = editing === block.uid;
@@ -183,11 +248,13 @@ export function BlockCanvas({
               setDragging(null);
             }}
             onClick={() => setSelected(block.uid)}
-            className={`group relative rounded-2xl border-2 p-2 transition-[border-color,box-shadow,transform] duration-200 will-change-transform ${
+            className={`group relative rounded-2xl border-2 p-2 transition-[border-color,box-shadow] duration-200 will-change-transform ${
               isSelected
                 ? "border-primary/70 shadow-lg"
                 : "border-transparent hover:border-primary/25"
-            } ${dragging === block.uid ? "scale-[0.99] opacity-50" : ""}`}
+            } ${dragging === block.uid ? "opacity-50" : ""} ${
+              live === block.uid ? "z-20 border-primary shadow-2xl" : ""
+            }`}
           >
             {/* Hover/selected chrome sits over the live preview. */}
             <div
@@ -199,12 +266,24 @@ export function BlockCanvas({
                 draggable
                 onDragStart={() => setDragging(block.uid)}
                 onDragEnd={() => setDragging(null)}
-                title="ড্র্যাগ করে সরান"
-                className="flex cursor-grab items-center gap-1 rounded-full border bg-background px-2 py-0.5 text-[11px] font-medium shadow-sm active:cursor-grabbing"
+                onPointerDown={(e) => {
+                  if (e.pointerType !== "mouse") startMove(e, block);
+                }}
+                title="ধরে টেনে যেখানে ইচ্ছা বসান (ক্রম বদলাতে মাউসে ড্র্যাগ)"
+                className="flex touch-none cursor-grab items-center gap-1 rounded-full border bg-background px-2 py-0.5 text-[11px] font-medium shadow-sm active:cursor-grabbing"
               >
                 <GripVertical className="size-3" />
                 {index + 1}. {blockLabel(block)}
               </span>
+              {block.lang ? (
+                <span
+                  onPointerDown={(e) => startMove(e, block)}
+                  title="মুক্তভাবে সরান"
+                  className="grid size-6 touch-none cursor-move place-items-center rounded-full border bg-background text-muted-foreground shadow-sm"
+                >
+                  <Move className="size-3.5" />
+                </span>
+              ) : null}
             </div>
 
             <div
@@ -230,9 +309,28 @@ export function BlockCanvas({
             </div>
 
             {/* Real preview — exactly what readers see. */}
-            <div className="overflow-hidden rounded-xl px-1">
+            <div className="rounded-xl px-1">
               <Markdown>{blockToMarkdown(block)}</Markdown>
             </div>
+
+            {block.lang && canResize(block.lang) ? (
+              <span
+                onPointerDown={(e) => startResize(e, block)}
+                title="কোণা টেনে সাইজ বদলান"
+                className={`absolute -bottom-2 -right-2 z-10 grid size-7 touch-none cursor-nwse-resize place-items-center rounded-full border-2 border-primary/60 bg-background text-primary shadow-md transition-opacity ${
+                  isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                }`}
+              >
+                <Maximize2 className="size-3.5" />
+              </span>
+            ) : null}
+
+            {live === block.uid ? (
+              <span className="pointer-events-none absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-primary px-2 py-0.5 text-[11px] font-medium text-primary-foreground tabular-nums">
+                {width}% · {nudgeX}% · {nudgeY}px
+              </span>
+            ) : null}
+
 
             {isSelected ? (
               <div
