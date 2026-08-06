@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   AudioLines,
   Check,
+  Code2,
   Columns3,
   Frame,
   Heading,
