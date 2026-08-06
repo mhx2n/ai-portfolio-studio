@@ -412,6 +412,83 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
     );
   }
 
+  if (lang === "mosaic") {
+    const items = body
+      .split("\n")
+      .map((line) => line.split("|").map((s) => s.trim()))
+      .filter((parts) => parts[0]);
+    if (!items.length) return null;
+    const cols = Math.min(4, Math.max(1, Number(get("cols", "3")) || 3));
+    return (
+      <Frame caption={caption} captionPos={captionPos} captionSize={captionSize} size={size}>
+        <div
+          className="blog-mosaic"
+          data-cols={String(cols)}
+          data-stagger={get("stagger", "on") === "off" ? "off" : "on"}
+        >
+          {items.map((parts, i) => {
+            const src = parts[0] ?? "";
+            const label = parts[1] ?? "";
+            const iframe = isSafeHttp(src) ? embedUrl(src) : null;
+            const isVideo = /\.(mp4|webm|mov|m4v)(\?|$)/i.test(src);
+            return (
+              <figure key={`${src}-${i}`} className="blog-mosaic-item">
+                <div className="blog-mosaic-media">
+                  {iframe ? (
+                    <iframe src={iframe} title={label || `media ${i + 1}`} loading="lazy" allowFullScreen />
+                  ) : isVideo ? (
+                    <video src={resolveSrc(src)} controls playsInline preload="metadata" />
+                  ) : (
+                    <img src={resolveSrc(src)} alt={label || `ছবি ${i + 1}`} loading="lazy" decoding="async" />
+                  )}
+                </div>
+                {label ? (
+                  <figcaption className="blog-caption" data-cap={captionSize || "sm"}>
+                    <RichText as="div">{label}</RichText>
+                  </figcaption>
+                ) : null}
+              </figure>
+            );
+          })}
+        </div>
+      </Frame>
+    );
+  }
+
+  if (lang === "paper") {
+    const label = get("label");
+    const Icon = pickedIcon;
+    return (
+      <div
+        className={`blog-paper blog-paper-${get("style", "soft")}`}
+        data-size={size}
+        data-align={align}
+      >
+        {Icon ? <Icon className="blog-paper-icon" aria-hidden /> : null}
+        {get("title") ? <RichText className="blog-paper-title">{get("title")}</RichText> : null}
+        <RichText className="blog-paper-body">{body || get("text")}</RichText>
+        {label ? <RichText className="blog-paper-label">{label}</RichText> : null}
+      </div>
+    );
+  }
+
+  if (lang === "decor") {
+    const kind = get("type", "arrow-curl").toLowerCase();
+    const flip = get("flip", "no") === "yes";
+    const w = Math.min(320, Math.max(48, Number(get("size", "120")) || 120));
+    return (
+      <div className="blog-decor" data-align={align} aria-hidden>
+        <span
+          className="blog-decor-art"
+          data-kind={kind}
+          style={{ width: `${w}px`, ...(flip ? { transform: "scaleX(-1)" } : {}) }}
+        >
+          <DecorArt kind={kind} />
+        </span>
+      </div>
+    );
+  }
+
   if (lang === "divider") {
     return <hr className={`blog-divider blog-divider-${get("style", "line")}`} data-size={size} />;
   }
