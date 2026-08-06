@@ -17,6 +17,7 @@ import { Route as HimusadminIndexRouteImport } from './routes/himusadmin.index'
 import { Route as HimusadminIdRouteImport } from './routes/himusadmin.$id'
 import { Route as HimusadminCodesRouteImport } from './routes/himusadmin.codes'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
+import { Route as ApiPublicKeepaliveRouteImport } from './routes/api/public/keepalive'
 import { Route as HimusadminBlogIndexRouteImport } from './routes/himusadmin.blog.index'
 import { Route as HimusadminBlogIdRouteImport } from './routes/himusadmin.blog.$id'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
@@ -61,6 +62,11 @@ const PSlugRoute = PSlugRouteImport.update({
   path: '/p/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicKeepaliveRoute = ApiPublicKeepaliveRouteImport.update({
+  id: '/api/public/keepalive',
+  path: '/api/public/keepalive',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HimusadminBlogIndexRoute = HimusadminBlogIndexRouteImport.update({
   id: '/himusadmin/blog/',
   path: '/himusadmin/blog/',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/p/$slug': typeof PSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/himusadmin/': typeof HimusadminIndexRoute
+  '/api/public/keepalive': typeof ApiPublicKeepaliveRoute
   '/himusadmin/blog/$id': typeof HimusadminBlogIdRoute
   '/himusadmin/blog/': typeof HimusadminBlogIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/p/$slug': typeof PSlugRoute
   '/blog': typeof BlogIndexRoute
   '/himusadmin': typeof HimusadminIndexRoute
+  '/api/public/keepalive': typeof ApiPublicKeepaliveRoute
   '/himusadmin/blog/$id': typeof HimusadminBlogIdRoute
   '/himusadmin/blog': typeof HimusadminBlogIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/p/$slug': typeof PSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/himusadmin/': typeof HimusadminIndexRoute
+  '/api/public/keepalive': typeof ApiPublicKeepaliveRoute
   '/himusadmin/blog/$id': typeof HimusadminBlogIdRoute
   '/himusadmin/blog/': typeof HimusadminBlogIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/blog/'
     | '/himusadmin/'
+    | '/api/public/keepalive'
     | '/himusadmin/blog/$id'
     | '/himusadmin/blog/'
     | '/api/public/media/$'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/blog'
     | '/himusadmin'
+    | '/api/public/keepalive'
     | '/himusadmin/blog/$id'
     | '/himusadmin/blog'
     | '/api/public/media/$'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/blog/'
     | '/himusadmin/'
+    | '/api/public/keepalive'
     | '/himusadmin/blog/$id'
     | '/himusadmin/blog/'
     | '/api/public/media/$'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   PSlugRoute: typeof PSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   HimusadminIndexRoute: typeof HimusadminIndexRoute
+  ApiPublicKeepaliveRoute: typeof ApiPublicKeepaliveRoute
   HimusadminBlogIdRoute: typeof HimusadminBlogIdRoute
   HimusadminBlogIndexRoute: typeof HimusadminBlogIndexRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/keepalive': {
+      id: '/api/public/keepalive'
+      path: '/api/public/keepalive'
+      fullPath: '/api/public/keepalive'
+      preLoaderRoute: typeof ApiPublicKeepaliveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/himusadmin/blog/': {
       id: '/himusadmin/blog/'
       path: '/himusadmin/blog'
@@ -264,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   PSlugRoute: PSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   HimusadminIndexRoute: HimusadminIndexRoute,
+  ApiPublicKeepaliveRoute: ApiPublicKeepaliveRoute,
   HimusadminBlogIdRoute: HimusadminBlogIdRoute,
   HimusadminBlogIndexRoute: HimusadminBlogIndexRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
