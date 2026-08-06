@@ -250,5 +250,67 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
     );
   }
 
+  if (lang === "columns") {
+    const parts = body
+      .split(/^\s*---\s*$/m)
+      .map((p) => p.trim())
+      .filter(Boolean);
+    if (!parts.length) return null;
+    const cols = Math.min(3, Math.max(1, Number(get("cols", "2")) || 2));
+    return (
+      <div className="blog-cols" data-cols={String(cols)} data-size={size} data-align={align}>
+        {parts.map((part, i) => {
+          const [first, ...rest] = part.split("\n");
+          const hasTitle = /^#+\s/.test(first ?? "");
+          return (
+            <div key={i} className="blog-col">
+              {hasTitle ? <p className="blog-col-title">{(first ?? "").replace(/^#+\s*/, "")}</p> : null}
+              <p className="blog-col-body">{(hasTitle ? rest.join("\n") : part).trim()}</p>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  if (lang === "cards") {
+    const rows = body
+      .split("\n")
+      .map((line) => line.split("|").map((s) => s.trim()))
+      .filter((parts) => parts[0]);
+    if (!rows.length) return null;
+    const cols = Math.min(3, Math.max(1, Number(get("cols", "2")) || 2));
+    return (
+      <div className="blog-cards" data-cols={String(cols)} data-size={size} data-align={align}>
+        {rows.map((parts, i) => (
+          <div key={i} className="blog-card">
+            <p className="blog-card-title">{parts[0]}</p>
+            {parts[1] ? <p className="blog-card-body">{parts[1]}</p> : null}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (lang === "banner") {
+    const title = get("title") || body;
+    if (!title.trim()) return null;
+    return (
+      <div className={`blog-banner blog-banner-${get("style", "solid")}`} data-size={size} data-align={align}>
+        <p className="blog-banner-title">{title}</p>
+        {get("subtitle") ? <p className="blog-banner-sub">{get("subtitle")}</p> : null}
+      </div>
+    );
+  }
+
+  if (lang === "divider") {
+    return <hr className={`blog-divider blog-divider-${get("style", "line")}`} data-size={size} />;
+  }
+
+  if (lang === "spacer") {
+    const h = Math.min(240, Math.max(8, Number(get("height", "48")) || 48));
+    return <div className="blog-spacer" style={{ height: `${h}px` }} aria-hidden />;
+  }
+
   return null;
 }
