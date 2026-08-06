@@ -1,10 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import type { BlogSettings, PublicPost, PublicPostCard } from "./blog-types";
+import { serverSupabaseConfig } from "./server-env";
 
 function publicClient() {
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-  const url = process.env["SUPABASE_URL"]!;
+  const { url, key } = serverSupabaseConfig();
+
   return createClient<Database>(url, key, {
     auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
     global: {
