@@ -633,6 +633,117 @@
   background-image:
     radial-gradient(120% 60% at 50% 0%, oklch(0.93 0.03 25 / 35%), transparent 70%);
 }
+
+/* ---- Selectable blog background themes ---- */
+.blog-journal.blog-bg-ivory {
+  --background: oklch(0.99 0.004 250);
+  --card: oklch(1 0 0);
+  --surface: oklch(0.975 0.004 250);
+  --muted: oklch(0.95 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.94 0.02 250 / 40%), transparent 70%);
+}
+.blog-journal.blog-bg-mist {
+  --background: oklch(0.975 0.014 220);
+  --foreground: oklch(0.28 0.045 250);
+  --card: oklch(0.995 0.006 220);
+  --surface: oklch(0.955 0.018 220);
+  --muted: oklch(0.93 0.02 220);
+  --secondary: oklch(0.94 0.018 220);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.9 0.045 225 / 45%), transparent 70%);
+}
+.blog-journal.blog-bg-mint {
+  --background: oklch(0.978 0.018 155);
+  --foreground: oklch(0.27 0.05 175);
+  --card: oklch(0.995 0.008 155);
+  --surface: oklch(0.958 0.024 155);
+  --muted: oklch(0.935 0.028 155);
+  --secondary: oklch(0.945 0.024 155);
+  --border: oklch(0.27 0.05 175 / 14%);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.9 0.05 160 / 45%), transparent 70%);
+}
+.blog-journal.blog-bg-blush {
+  --background: oklch(0.978 0.018 15);
+  --foreground: oklch(0.29 0.05 350);
+  --card: oklch(0.995 0.008 15);
+  --surface: oklch(0.958 0.024 15);
+  --muted: oklch(0.935 0.028 15);
+  --secondary: oklch(0.945 0.024 15);
+  --border: oklch(0.29 0.05 350 / 14%);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.9 0.06 10 / 50%), transparent 70%);
+}
+.blog-journal.blog-bg-sand {
+  --background: oklch(0.965 0.028 75);
+  --foreground: oklch(0.3 0.05 55);
+  --card: oklch(0.99 0.014 75);
+  --surface: oklch(0.945 0.032 75);
+  --muted: oklch(0.925 0.036 75);
+  --secondary: oklch(0.935 0.032 75);
+  --border: oklch(0.3 0.05 55 / 15%);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.89 0.06 65 / 50%), transparent 70%);
+}
+.blog-journal.blog-bg-lavender {
+  --background: oklch(0.972 0.02 300);
+  --foreground: oklch(0.28 0.055 295);
+  --card: oklch(0.995 0.008 300);
+  --surface: oklch(0.952 0.026 300);
+  --muted: oklch(0.93 0.03 300);
+  --secondary: oklch(0.942 0.026 300);
+  --border: oklch(0.28 0.055 295 / 14%);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.9 0.06 300 / 50%), transparent 70%);
+}
+.blog-journal.blog-bg-slate {
+  --background: oklch(0.26 0.02 255);
+  --foreground: oklch(0.95 0.008 250);
+  --card: oklch(0.3 0.024 255);
+  --surface: oklch(0.31 0.026 255);
+  --muted: oklch(0.34 0.026 255);
+  --muted-foreground: oklch(0.76 0.02 250);
+  --secondary: oklch(0.33 0.026 255);
+  --secondary-foreground: oklch(0.95 0.008 250);
+  --border: oklch(0.95 0.008 250 / 16%);
+  --primary-foreground: oklch(0.18 0.02 255);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.45 0.05 250 / 45%), transparent 70%);
+}
+.blog-journal.blog-bg-midnight {
+  --background: oklch(0.19 0.03 265);
+  --foreground: oklch(0.96 0.01 260);
+  --card: oklch(0.23 0.034 265);
+  --surface: oklch(0.24 0.036 265);
+  --muted: oklch(0.28 0.036 265);
+  --muted-foreground: oklch(0.75 0.024 260);
+  --secondary: oklch(0.26 0.036 265);
+  --secondary-foreground: oklch(0.96 0.01 260);
+  --border: oklch(0.96 0.01 260 / 16%);
+  --primary-foreground: oklch(0.16 0.03 265);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.42 0.09 285 / 50%), transparent 70%);
+}
+.blog-journal.blog-bg-noir {
+  --background: oklch(0.16 0 0);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.21 0 0);
+  --surface: oklch(0.22 0 0);
+  --muted: oklch(0.26 0 0);
+  --muted-foreground: oklch(0.74 0 0);
+  --secondary: oklch(0.24 0 0);
+  --secondary-foreground: oklch(0.96 0 0);
+  --border: oklch(0.96 0 0 / 15%);
+  --primary-foreground: oklch(0.14 0 0);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.35 0.03 90 / 40%), transparent 70%);
+}
+.blog-journal.blog-bg-forest {
+  --background: oklch(0.22 0.04 155);
+  --foreground: oklch(0.95 0.015 150);
+  --card: oklch(0.26 0.045 155);
+  --surface: oklch(0.27 0.048 155);
+  --muted: oklch(0.31 0.048 155);
+  --muted-foreground: oklch(0.76 0.03 150);
+  --secondary: oklch(0.29 0.048 155);
+  --secondary-foreground: oklch(0.95 0.015 150);
+  --border: oklch(0.95 0.015 150 / 16%);
+  --primary-foreground: oklch(0.18 0.04 155);
+  background-image: radial-gradient(120% 60% at 50% 0%, oklch(0.44 0.09 160 / 45%), transparent 70%);
+}
 .blog-journal ::selection {
   background: color-mix(in oklab, var(--blog-accent, var(--foreground)) 25%, transparent);
 }

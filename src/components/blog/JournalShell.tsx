@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { fontStack } from "@/lib/blog-types";
+import { bgClass, fontStack } from "@/lib/blog-types";
 import type { BlogSettings } from "@/lib/blog-types";
 
 /**
@@ -18,7 +18,7 @@ export function JournalShell({
 }) {
   return (
     <div
-      className="blog-journal min-h-screen"
+      className={`blog-journal min-h-screen ${bgClass(settings.bg ?? "cream")}`}
       style={
         {
           "--blog-accent": settings.accent,

@@ -34,6 +34,7 @@ export type BlogSettings = {
   accent: string;
   font: string;
   layout: string;
+  bg: string;
 };
 
 export const BLOG_FONTS = [
@@ -48,6 +49,25 @@ export const BLOG_LAYOUTS = [
   { id: "cards", label: "কার্ড গ্রিড" },
   { id: "magazine", label: "ম্যাগাজিন (বড় ফিচার্ড পোস্ট)" },
 ] as const;
+
+export const BLOG_BACKGROUNDS = [
+  { id: "cream", label: "ক্রিম (ডিফল্ট)", swatch: "#fbf7ef" },
+  { id: "ivory", label: "আইভরি (পরিষ্কার সাদা)", swatch: "#fcfcfd" },
+  { id: "mist", label: "মিস্ট (হালকা নীল)", swatch: "#eef4fa" },
+  { id: "mint", label: "মিন্ট (হালকা সবুজ)", swatch: "#eef8f1" },
+  { id: "blush", label: "ব্লাশ (হালকা গোলাপি)", swatch: "#fdeff0" },
+  { id: "sand", label: "স্যান্ড (উষ্ণ বালি)", swatch: "#f6ecd9" },
+  { id: "lavender", label: "ল্যাভেন্ডার", swatch: "#f3eefb" },
+  { id: "slate", label: "স্লেট (ডার্ক গ্রে)", swatch: "#33384a" },
+  { id: "midnight", label: "মিডনাইট (ডার্ক নীল)", swatch: "#1b2140" },
+  { id: "noir", label: "নয়ার (কালো)", swatch: "#1a1a1a" },
+  { id: "forest", label: "ফরেস্ট (ডার্ক সবুজ)", swatch: "#1e3327" },
+] as const;
+
+export function bgClass(id: string) {
+  const found = BLOG_BACKGROUNDS.find((b) => b.id === id);
+  return `blog-bg-${found?.id ?? "cream"}`;
+}
 
 export const BLOG_ACCENTS = ["#6ee7f9", "#fb923c", "#c084fc", "#4ade80", "#f472b6", "#facc15"] as const;
 
