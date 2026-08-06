@@ -19,6 +19,7 @@ import {
   Sparkle,
 } from "lucide-react";
 import { mediaUrl } from "@/lib/portfolio-types";
+import { RawHtml } from "./RawHtml";
 
 /** Known custom block languages usable as ```name fences inside post markdown. */
 export const BLOG_BLOCK_LANGS = [
@@ -37,6 +38,7 @@ export const BLOG_BLOCK_LANGS = [
   "banner",
   "divider",
   "spacer",
+  "html",
 ] as const;
 
 export type BlockLang = (typeof BLOG_BLOCK_LANGS)[number];
