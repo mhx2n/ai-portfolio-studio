@@ -46,6 +46,15 @@ import {
   writeCaptionPos,
   writeIcon,
   writeWidth,
+  readFloat,
+  writeFloat,
+  readNudgeX,
+  writeNudgeX,
+  readNudgeY,
+  writeNudgeY,
+  readRotate,
+  writeRotate,
+  type BlockFloat,
   type BlockAlign,
   type BlockIcon,
   type CanvasBlock,
@@ -160,6 +169,10 @@ export function BlockCanvas({
         const icon = readIcon(block.source);
         const caption = readCaption(block.source);
         const captionPos = readCaptionPos(block.source);
+        const side = readFloat(block.source);
+        const nudgeX = readNudgeX(block.source);
+        const nudgeY = readNudgeY(block.source);
+        const rotate = readRotate(block.source);
         return (
           <div
             key={block.uid}
@@ -235,11 +248,70 @@ export function BlockCanvas({
                       max={100}
                       step={5}
                       value={width}
-                      onChange={(e) => update(block.uid, writeWidth(block.source, Number(e.target.value)))}
+                      onChange={(e) =>
+                        update(block.uid, writeWidth(block.source, Number(e.target.value)))
+                      }
                       className="h-1.5 min-w-0 flex-1 accent-primary"
                     />
                     <span className="w-10 shrink-0 text-right tabular-nums">{width}%</span>
                   </label>
+                ) : null}
+
+                {block.lang ? (
+                  <>
+                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                      <span className="w-16 shrink-0">বসানো</span>
+                      {(
+                        [
+                          { id: "none", label: "সম্পূর্ণ সারি" },
+                          { id: "left", label: "বাঁয়ে ভাসবে" },
+                          { id: "right", label: "ডানে ভাসবে" },
+                        ] as { id: BlockFloat; label: string }[]
+                      ).map((f) => (
+                        <button
+                          key={f.id}
+                          type="button"
+                          title={f.label}
+                          onClick={() => update(block.uid, writeFloat(block.source, f.id))}
+                          className={`rounded-full px-2.5 py-0.5 text-[11px] transition-colors ${
+                            side === f.id
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {f.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <Slider
+                      label="ডানে/বাঁয়ে"
+                      min={-40}
+                      max={40}
+                      step={1}
+                      value={nudgeX}
+                      suffix="%"
+                      onChange={(v) => update(block.uid, writeNudgeX(block.source, v))}
+                    />
+                    <Slider
+                      label="উপরে/নিচে"
+                      min={-120}
+                      max={120}
+                      step={4}
+                      value={nudgeY}
+                      suffix="px"
+                      onChange={(v) => update(block.uid, writeNudgeY(block.source, v))}
+                    />
+                    <Slider
+                      label="কাত"
+                      min={-12}
+                      max={12}
+                      step={1}
+                      value={rotate}
+                      suffix="°"
+                      onChange={(v) => update(block.uid, writeRotate(block.source, v))}
+                    />
+                  </>
                 ) : null}
 
                 {canAlign(block.lang) ? (
@@ -267,16 +339,22 @@ export function BlockCanvas({
                 {canCaption(block.lang) ? (
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">ক্যাপশন</span>
+                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">
+                        ক্যাপশন
+                      </span>
                       <input
                         value={caption}
                         placeholder="ক্যাপশন লিখুন"
-                        onChange={(e) => update(block.uid, writeCaption(block.source, e.target.value))}
+                        onChange={(e) =>
+                          update(block.uid, writeCaption(block.source, e.target.value))
+                        }
                         className="min-w-0 flex-1 rounded-lg border bg-background px-2 py-1 text-xs"
                       />
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">অবস্থান</span>
+                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">
+                        অবস্থান
+                      </span>
                       {(["top", "bottom"] as const).map((pos) => (
                         <button
                           key={pos}
@@ -297,7 +375,9 @@ export function BlockCanvas({
 
                 {canIcon(block.lang) ? (
                   <div className="flex items-start gap-2">
-                    <span className="mt-1 w-16 shrink-0 text-[11px] text-muted-foreground">আইকন</span>
+                    <span className="mt-1 w-16 shrink-0 text-[11px] text-muted-foreground">
+                      আইকন
+                    </span>
                     <div className="flex flex-wrap gap-1">
                       {ICONS.map((it) => (
                         <button
@@ -335,6 +415,43 @@ export function BlockCanvas({
         );
       })}
     </div>
+  );
+}
+
+function Slider({
+  label,
+  min,
+  max,
+  step,
+  value,
+  suffix,
+  onChange,
+}: {
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+  value: number;
+  suffix: string;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <label className="flex items-center gap-2 text-[11px] text-muted-foreground">
+      <span className="w-16 shrink-0">{label}</span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="h-1.5 min-w-0 flex-1 accent-primary"
+      />
+      <span className="w-10 shrink-0 text-right tabular-nums">
+        {value}
+        {suffix}
+      </span>
+    </label>
   );
 }
 
