@@ -176,6 +176,21 @@ function AuthPage() {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="su-code">ইউনিক কোড</Label>
+                    <Input
+                      id="su-code"
+                      required
+                      placeholder="XXXXX-XXXXX"
+                      className="font-mono tracking-widest"
+                      value={inviteCode}
+                      onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      অ্যাডমিন থেকে পাওয়া কোডটি দিন — ইমেইল কনফার্ম করার দরকার নেই।
+                    </p>
+                  </div>
+
                   <Button type="submit" className="w-full" disabled={busy}>
                     {busy ? <Loader2 className="size-4 animate-spin" /> : "অ্যাকাউন্ট তৈরি করুন"}
                   </Button>
