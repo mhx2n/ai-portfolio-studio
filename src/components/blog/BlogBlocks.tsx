@@ -360,13 +360,19 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
   if (lang === "banner") {
     const title = get("title") || body;
     if (!title.trim()) return null;
+  if (lang === "banner") {
+    const title = get("title") || body;
+    if (!title.trim()) return null;
+    const Icon = pickedIcon;
     return (
       <div className={`blog-banner blog-banner-${get("style", "solid")}`} data-size={size} data-align={align}>
+        {Icon ? <Icon className="blog-banner-icon" aria-hidden /> : null}
         <p className="blog-banner-title">{title}</p>
         {get("subtitle") ? <p className="blog-banner-sub">{get("subtitle")}</p> : null}
       </div>
     );
   }
+
 
   if (lang === "divider") {
     return <hr className={`blog-divider blog-divider-${get("style", "line")}`} data-size={size} />;
