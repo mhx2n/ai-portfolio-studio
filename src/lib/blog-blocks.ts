@@ -168,3 +168,88 @@ export function blockSummary(block: CanvasBlock) {
     .join(" · ");
   return flat.slice(0, 90);
 }
+
+/* ---------- Generic meta helpers (key: value lines at the top of a fence) ---------- */
+
+export function readMeta(source: string, key: string): string {
+  const re = new RegExp(`^[ \\t]*${key}[ \\t]*:[ \\t]*(.*)$`, "im");
+  return (re.exec(source)?.[1] ?? "").trim();
+}
+
+export function writeMeta(source: string, key: string, value: string): string {
+  const re = new RegExp(`^[ \\t]*${key}[ \\t]*:[ \\t]*.*\\n?`, "gim");
+  const stripped = source.replace(re, "").replace(/^\n+/, "");
+  if (!value.trim()) return stripped;
+  return `${key}: ${value.trim()}\n${stripped}`;
+}
+
+/** Author-chosen width in percent (30–100). 100 = full. */
+export function readWidth(source: string): number {
+  const raw = Number(readMeta(source, "width"));
+  if (!Number.isFinite(raw) || raw <= 0) return 100;
+  return Math.min(100, Math.max(30, Math.round(raw)));
+}
+
+export function writeWidth(source: string, width: number): string {
+  const w = Math.min(100, Math.max(30, Math.round(width)));
+  return writeMeta(source, "width", w >= 100 ? "" : String(w));
+}
+
+/** Caption placement: above or below the block. */
+export type CaptionPos = "top" | "bottom";
+
+export function readCaptionPos(source: string): CaptionPos {
+  return readMeta(source, "caption_pos") === "top" ? "top" : "bottom";
+}
+
+export function writeCaptionPos(source: string, pos: CaptionPos): string {
+  return writeMeta(source, "caption_pos", pos === "top" ? "top" : "");
+}
+
+/** Blocks that support a caption line. */
+export const CAPTIONABLE_LANGS = ["video", "audio", "embed", "gallery"];
+export function canCaption(lang: string | null) {
+  return !!lang && CAPTIONABLE_LANGS.includes(lang);
+}
+
+/** Icon picker: names understood by BlogBlocks. */
+export const BLOCK_ICONS = [
+  "none",
+  "info",
+  "tip",
+  "success",
+  "warn",
+  "star",
+  "heart",
+  "flame",
+  "rocket",
+  "bell",
+  "pin",
+  "link",
+  "download",
+  "play",
+  "sparkle",
+] as const;
+export type BlockIcon = (typeof BLOCK_ICONS)[number];
+
+export const ICONABLE_LANGS = ["callout", "info", "banner", "button", "telegram", "quote", "cards"];
+export function canIcon(lang: string | null) {
+  return !!lang && ICONABLE_LANGS.includes(lang);
+}
+
+export function readIcon(source: string): BlockIcon {
+  const value = readMeta(source, "icon").toLowerCase();
+  return (BLOCK_ICONS as readonly string[]).includes(value) ? (value as BlockIcon) : "none";
+}
+
+export function writeIcon(source: string, icon: BlockIcon): string {
+  return writeMeta(source, "icon", icon === "none" ? "" : icon);
+}
+
+/** Caption text of a block. */
+export function readCaption(source: string) {
+  return readMeta(source, "caption");
+}
+export function writeCaption(source: string, caption: string) {
+  return writeMeta(source, "caption", caption);
+}
