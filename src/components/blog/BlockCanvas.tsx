@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   ArrowDown,
   ArrowUp,
   Copy,
@@ -14,11 +17,15 @@ import {
   blockLabel,
   blockSummary,
   blockToMarkdown,
+  canAlign,
   canResize,
   parseBlocks,
+  readAlign,
   readSize,
   serializeBlocks,
+  writeAlign,
   writeSize,
+  type BlockAlign,
   type BlockSize,
   type CanvasBlock,
 } from "@/lib/blog-blocks";
@@ -27,6 +34,12 @@ const SIZES: { id: BlockSize; label: string }[] = [
   { id: "sm", label: "ছোট" },
   { id: "md", label: "মাঝারি" },
   { id: "full", label: "পূর্ণ" },
+];
+
+const ALIGNS: { id: BlockAlign; label: string; Icon: typeof AlignLeft }[] = [
+  { id: "left", label: "বাঁয়ে", Icon: AlignLeft },
+  { id: "center", label: "মাঝে", Icon: AlignCenter },
+  { id: "right", label: "ডানে", Icon: AlignRight },
 ];
 
 /** Visual, reorderable canvas over the post markdown. */
@@ -110,6 +123,7 @@ export function BlockCanvas({
         const isSelected = selected === block.uid;
         const isEditing = editing === block.uid;
         const size = readSize(block.source);
+        const align = readAlign(block.source);
         return (
           <div
             key={block.uid}
@@ -171,6 +185,27 @@ export function BlockCanvas({
                     }`}
                   >
                     {s.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            {canAlign(block.lang) ? (
+              <div className="mt-2 flex items-center gap-1.5">
+                {ALIGNS.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    aria-label={a.label}
+                    title={a.label}
+                    onClick={() => update(block.uid, writeAlign(block.source, a.id))}
+                    className={`grid size-7 place-items-center rounded-lg transition-colors ${
+                      align === a.id
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <a.Icon className="size-3.5" />
                   </button>
                 ))}
               </div>
