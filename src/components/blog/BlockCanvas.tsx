@@ -96,7 +96,70 @@ export function BlockCanvas({
   const [selected, setSelected] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
+  const [live, setLive] = useState<string | null>(null);
   const lastRef = useRef(value);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  /** Free drag: moves a block by pointer, writing x% / y px meta. */
+  function startMove(e: React.PointerEvent, block: CanvasBlock) {
+    if (!block.lang) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const baseX = readNudgeX(block.source);
+    const baseY = readNudgeY(block.source);
+    const colWidth = wrapRef.current?.getBoundingClientRect().width || 320;
+    let source = block.source;
+    setLive(block.uid);
+    const onMove = (ev: PointerEvent) => {
+      const dxPct = baseX + ((ev.clientX - startX) / colWidth) * 100;
+      const dyPx = baseY + (ev.clientY - startY);
+      source = writeNudgeY(writeNudgeX(block.source, dxPct), dyPx);
+      setBlocks((prev) => prev.map((b) => (b.uid === block.uid ? { ...b, source } : b)));
+    };
+    const end = () => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", end);
+      el.removeEventListener("pointercancel", end);
+      setLive(null);
+      update(block.uid, source);
+    };
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+  }
+
+  /** Corner handle: resizes width by pointer. */
+  function startResize(e: React.PointerEvent, block: CanvasBlock) {
+    if (!block.lang) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
+    const startX = e.clientX;
+    const base = readWidth(block.source);
+    const colWidth = wrapRef.current?.getBoundingClientRect().width || 320;
+    let source = block.source;
+    setLive(block.uid);
+    const onMove = (ev: PointerEvent) => {
+      const next = base + ((ev.clientX - startX) / colWidth) * 100;
+      source = writeWidth(block.source, next);
+      setBlocks((prev) => prev.map((b) => (b.uid === block.uid ? { ...b, source } : b)));
+    };
+    const end = () => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", end);
+      el.removeEventListener("pointercancel", end);
+      setLive(null);
+      update(block.uid, source);
+    };
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+  }
 
   useEffect(() => {
     if (value === lastRef.current) return;
