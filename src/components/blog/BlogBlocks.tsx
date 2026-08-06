@@ -264,7 +264,11 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
           target="_blank"
           rel="noopener noreferrer nofollow"
         >
-          {isTg ? <Send className="size-4" aria-hidden /> : <ExternalLink className="size-4" aria-hidden />}
+          {(() => {
+            const Icon = pickedIcon ?? (isTg ? Send : ExternalLink);
+            return <Icon className="size-4" aria-hidden />;
+          })()}
+
           {label}
         </a>
       </p>
