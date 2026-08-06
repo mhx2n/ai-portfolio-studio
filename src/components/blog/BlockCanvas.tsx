@@ -248,7 +248,9 @@ export function BlockCanvas({
                       max={100}
                       step={5}
                       value={width}
-                      onChange={(e) => update(block.uid, writeWidth(block.source, Number(e.target.value)))}
+                      onChange={(e) =>
+                        update(block.uid, writeWidth(block.source, Number(e.target.value)))
+                      }
                       className="h-1.5 min-w-0 flex-1 accent-primary"
                     />
                     <span className="w-10 shrink-0 text-right tabular-nums">{width}%</span>
@@ -337,16 +339,22 @@ export function BlockCanvas({
                 {canCaption(block.lang) ? (
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">ক্যাপশন</span>
+                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">
+                        ক্যাপশন
+                      </span>
                       <input
                         value={caption}
                         placeholder="ক্যাপশন লিখুন"
-                        onChange={(e) => update(block.uid, writeCaption(block.source, e.target.value))}
+                        onChange={(e) =>
+                          update(block.uid, writeCaption(block.source, e.target.value))
+                        }
                         className="min-w-0 flex-1 rounded-lg border bg-background px-2 py-1 text-xs"
                       />
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">অবস্থান</span>
+                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">
+                        অবস্থান
+                      </span>
                       {(["top", "bottom"] as const).map((pos) => (
                         <button
                           key={pos}
@@ -367,7 +375,9 @@ export function BlockCanvas({
 
                 {canIcon(block.lang) ? (
                   <div className="flex items-start gap-2">
-                    <span className="mt-1 w-16 shrink-0 text-[11px] text-muted-foreground">আইকন</span>
+                    <span className="mt-1 w-16 shrink-0 text-[11px] text-muted-foreground">
+                      আইকন
+                    </span>
                     <div className="flex flex-wrap gap-1">
                       {ICONS.map((it) => (
                         <button

@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { mediaUrl } from "@/lib/portfolio-types";
 
-
 /** Known custom block languages usable as ```name fences inside post markdown. */
 export const BLOG_BLOCK_LANGS = [
   "video",
@@ -151,7 +150,11 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
   const side = floatRaw === "left" || floatRaw === "right" ? floatRaw : "none";
   const inner = <BlockBody lang={lang} source={source} />;
   if (w >= 100 && !x && !y && !rotate && side === "none") return inner;
-  const transform = [x ? `translateX(${x}%)` : "", y ? `translateY(${y}px)` : "", rotate ? `rotate(${rotate}deg)` : ""]
+  const transform = [
+    x ? `translateX(${x}%)` : "",
+    y ? `translateY(${y}px)` : "",
+    rotate ? `rotate(${rotate}deg)` : "",
+  ]
     .filter(Boolean)
     .join(" ");
   return (
@@ -177,9 +180,6 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
       {props.children}
     </Frame>
   );
-
-
-
 
   if (lang === "video") {
     const src = get("url") || get("src") || body;
@@ -242,7 +242,10 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
     const Icon = pickedIcon ?? CALLOUT_ICONS[kind] ?? Info;
     const title = get("title");
     return (
-      <aside className={`blog-callout blog-callout-${CALLOUT_ICONS[kind] ? kind : "info"}`} data-size={size}>
+      <aside
+        className={`blog-callout blog-callout-${CALLOUT_ICONS[kind] ? kind : "info"}`}
+        data-size={size}
+      >
         <Icon className="blog-callout-icon" aria-hidden />
         <div>
           {title ? <p className="blog-callout-title">{title}</p> : null}
@@ -263,7 +266,6 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
       </blockquote>
     );
   }
-
 
   if (lang === "button" || lang === "telegram") {
     const isTg = lang === "telegram";
@@ -344,7 +346,9 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
           const hasTitle = /^#+\s/.test(first ?? "");
           return (
             <div key={i} className="blog-col">
-              {hasTitle ? <p className="blog-col-title">{(first ?? "").replace(/^#+\s*/, "")}</p> : null}
+              {hasTitle ? (
+                <p className="blog-col-title">{(first ?? "").replace(/^#+\s*/, "")}</p>
+              ) : null}
               <p className="blog-col-body">{(hasTitle ? rest.join("\n") : part).trim()}</p>
             </div>
           );
@@ -377,14 +381,17 @@ function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
     if (!title.trim()) return null;
     const Icon = pickedIcon;
     return (
-      <div className={`blog-banner blog-banner-${get("style", "solid")}`} data-size={size} data-align={align}>
+      <div
+        className={`blog-banner blog-banner-${get("style", "solid")}`}
+        data-size={size}
+        data-align={align}
+      >
         {Icon ? <Icon className="blog-banner-icon" aria-hidden /> : null}
         <p className="blog-banner-title">{title}</p>
         {get("subtitle") ? <p className="blog-banner-sub">{get("subtitle")}</p> : null}
       </div>
     );
   }
-
 
   if (lang === "divider") {
     return <hr className={`blog-divider blog-divider-${get("style", "line")}`} data-size={size} />;
