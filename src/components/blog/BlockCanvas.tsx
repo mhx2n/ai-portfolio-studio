@@ -5,36 +5,51 @@ import {
   AlignRight,
   ArrowDown,
   ArrowUp,
+  Bell,
+  CheckCircle2,
   Copy,
+  Download,
+  Flame,
   GripVertical,
-  Maximize2,
+  Heart,
+  Info,
+  Lightbulb,
+  Link as LinkIcon,
+  MapPin,
   Pencil,
+  Play,
+  Rocket,
+  Sparkle,
+  Star,
   Trash2,
+  AlertTriangle,
+  Ban,
   X,
 } from "lucide-react";
 import { Markdown } from "./Markdown";
 import {
   blockLabel,
-  blockSummary,
   blockToMarkdown,
   canAlign,
+  canCaption,
+  canIcon,
   canResize,
   parseBlocks,
   readAlign,
-  readSize,
+  readCaption,
+  readCaptionPos,
+  readIcon,
+  readWidth,
   serializeBlocks,
   writeAlign,
-  writeSize,
+  writeCaption,
+  writeCaptionPos,
+  writeIcon,
+  writeWidth,
   type BlockAlign,
-  type BlockSize,
+  type BlockIcon,
   type CanvasBlock,
 } from "@/lib/blog-blocks";
-
-const SIZES: { id: BlockSize; label: string }[] = [
-  { id: "sm", label: "ছোট" },
-  { id: "md", label: "মাঝারি" },
-  { id: "full", label: "পূর্ণ" },
-];
 
 const ALIGNS: { id: BlockAlign; label: string; Icon: typeof AlignLeft }[] = [
   { id: "left", label: "বাঁয়ে", Icon: AlignLeft },
@@ -42,7 +57,25 @@ const ALIGNS: { id: BlockAlign; label: string; Icon: typeof AlignLeft }[] = [
   { id: "right", label: "ডানে", Icon: AlignRight },
 ];
 
-/** Visual, reorderable canvas over the post markdown. */
+const ICONS: { id: BlockIcon; Icon: typeof Info }[] = [
+  { id: "none", Icon: Ban },
+  { id: "info", Icon: Info },
+  { id: "tip", Icon: Lightbulb },
+  { id: "success", Icon: CheckCircle2 },
+  { id: "warn", Icon: AlertTriangle },
+  { id: "star", Icon: Star },
+  { id: "heart", Icon: Heart },
+  { id: "flame", Icon: Flame },
+  { id: "rocket", Icon: Rocket },
+  { id: "bell", Icon: Bell },
+  { id: "pin", Icon: MapPin },
+  { id: "link", Icon: LinkIcon },
+  { id: "download", Icon: Download },
+  { id: "play", Icon: Play },
+  { id: "sparkle", Icon: Sparkle },
+];
+
+/** Live-preview canvas: every block renders exactly as readers will see it. */
 export function BlockCanvas({
   value,
   onChange,
@@ -118,18 +151,18 @@ export function BlockCanvas({
   }
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-1">
       {blocks.map((block, index) => {
         const isSelected = selected === block.uid;
         const isEditing = editing === block.uid;
-        const size = readSize(block.source);
+        const width = readWidth(block.source);
         const align = readAlign(block.source);
+        const icon = readIcon(block.source);
+        const caption = readCaption(block.source);
+        const captionPos = readCaptionPos(block.source);
         return (
           <div
             key={block.uid}
-            draggable
-            onDragStart={() => setDragging(block.uid)}
-            onDragEnd={() => setDragging(null)}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault();
@@ -137,77 +170,154 @@ export function BlockCanvas({
               setDragging(null);
             }}
             onClick={() => setSelected(block.uid)}
-            className={`group rounded-2xl border bg-background p-3 transition-[box-shadow,transform,border-color] duration-200 will-change-transform ${
-              isSelected ? "border-primary/60 shadow-lg" : "hover:border-primary/30"
-            } ${dragging === block.uid ? "scale-[0.99] opacity-60" : ""}`}
+            className={`group relative rounded-2xl border-2 p-2 transition-[border-color,box-shadow,transform] duration-200 will-change-transform ${
+              isSelected
+                ? "border-primary/70 shadow-lg"
+                : "border-transparent hover:border-primary/25"
+            } ${dragging === block.uid ? "scale-[0.99] opacity-50" : ""}`}
           >
-            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
-              <div className="flex min-w-0 items-center gap-2">
-                <GripVertical className="size-4 shrink-0 cursor-grab text-muted-foreground" />
-                <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium">
-                  {index + 1}. {blockLabel(block)}
-                </span>
-                <span className="truncate text-[11px] text-muted-foreground">
-                  {blockSummary(block)}
-                </span>
-              </div>
-              <div className="flex shrink-0 items-center gap-1">
-                <IconBtn label="উপরে" onClick={() => move(block.uid, -1)}>
-                  <ArrowUp className="size-3.5" />
-                </IconBtn>
-                <IconBtn label="নিচে" onClick={() => move(block.uid, 1)}>
-                  <ArrowDown className="size-3.5" />
-                </IconBtn>
-                <IconBtn label="এডিট" onClick={() => setEditing(isEditing ? null : block.uid)}>
-                  {isEditing ? <X className="size-3.5" /> : <Pencil className="size-3.5" />}
-                </IconBtn>
-                <IconBtn label="কপি" onClick={() => duplicate(block.uid)}>
-                  <Copy className="size-3.5" />
-                </IconBtn>
-                <IconBtn label="মুছুন" onClick={() => remove(block.uid)} danger>
-                  <Trash2 className="size-3.5" />
-                </IconBtn>
-              </div>
+            {/* Hover/selected chrome sits over the live preview. */}
+            <div
+              className={`absolute -top-2.5 left-2 z-10 flex items-center gap-1 transition-opacity ${
+                isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+              }`}
+            >
+              <span
+                draggable
+                onDragStart={() => setDragging(block.uid)}
+                onDragEnd={() => setDragging(null)}
+                title="ড্র্যাগ করে সরান"
+                className="flex cursor-grab items-center gap-1 rounded-full border bg-background px-2 py-0.5 text-[11px] font-medium shadow-sm active:cursor-grabbing"
+              >
+                <GripVertical className="size-3" />
+                {index + 1}. {blockLabel(block)}
+              </span>
             </div>
 
-            {canResize(block.lang) ? (
-              <div className="mt-2 flex items-center gap-1.5">
-                <Maximize2 className="size-3 text-muted-foreground" />
-                {SIZES.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => update(block.uid, writeSize(block.source, s.id))}
-                    className={`rounded-full px-2 py-0.5 text-[11px] transition-colors ${
-                      size === s.id
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            ) : null}
+            <div
+              className={`absolute -top-2.5 right-2 z-10 flex items-center gap-1 transition-opacity ${
+                isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+              }`}
+            >
+              <IconBtn label="উপরে" onClick={() => move(block.uid, -1)}>
+                <ArrowUp className="size-3.5" />
+              </IconBtn>
+              <IconBtn label="নিচে" onClick={() => move(block.uid, 1)}>
+                <ArrowDown className="size-3.5" />
+              </IconBtn>
+              <IconBtn label="সোর্স এডিট" onClick={() => setEditing(isEditing ? null : block.uid)}>
+                {isEditing ? <X className="size-3.5" /> : <Pencil className="size-3.5" />}
+              </IconBtn>
+              <IconBtn label="কপি" onClick={() => duplicate(block.uid)}>
+                <Copy className="size-3.5" />
+              </IconBtn>
+              <IconBtn label="মুছুন" onClick={() => remove(block.uid)} danger>
+                <Trash2 className="size-3.5" />
+              </IconBtn>
+            </div>
 
-            {canAlign(block.lang) ? (
-              <div className="mt-2 flex items-center gap-1.5">
-                {ALIGNS.map((a) => (
-                  <button
-                    key={a.id}
-                    type="button"
-                    aria-label={a.label}
-                    title={a.label}
-                    onClick={() => update(block.uid, writeAlign(block.source, a.id))}
-                    className={`grid size-7 place-items-center rounded-lg transition-colors ${
-                      align === a.id
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <a.Icon className="size-3.5" />
-                  </button>
-                ))}
+            {/* Real preview — exactly what readers see. */}
+            <div className="overflow-hidden rounded-xl px-1">
+              <Markdown>{blockToMarkdown(block)}</Markdown>
+            </div>
+
+            {isSelected ? (
+              <div
+                className="mt-2 space-y-2 rounded-xl border bg-muted/30 p-2.5"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {canResize(block.lang) ? (
+                  <label className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                    <span className="w-16 shrink-0">সাইজ</span>
+                    <input
+                      type="range"
+                      min={30}
+                      max={100}
+                      step={5}
+                      value={width}
+                      onChange={(e) => update(block.uid, writeWidth(block.source, Number(e.target.value)))}
+                      className="h-1.5 min-w-0 flex-1 accent-primary"
+                    />
+                    <span className="w-10 shrink-0 text-right tabular-nums">{width}%</span>
+                  </label>
+                ) : null}
+
+                {canAlign(block.lang) ? (
+                  <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                    <span className="w-16 shrink-0">অ্যালাইন</span>
+                    {ALIGNS.map((a) => (
+                      <button
+                        key={a.id}
+                        type="button"
+                        aria-label={a.label}
+                        title={a.label}
+                        onClick={() => update(block.uid, writeAlign(block.source, a.id))}
+                        className={`grid size-7 place-items-center rounded-lg transition-colors ${
+                          align === a.id
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-secondary hover:text-foreground"
+                        }`}
+                      >
+                        <a.Icon className="size-3.5" />
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+
+                {canCaption(block.lang) ? (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">ক্যাপশন</span>
+                      <input
+                        value={caption}
+                        placeholder="ক্যাপশন লিখুন"
+                        onChange={(e) => update(block.uid, writeCaption(block.source, e.target.value))}
+                        className="min-w-0 flex-1 rounded-lg border bg-background px-2 py-1 text-xs"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">অবস্থান</span>
+                      {(["top", "bottom"] as const).map((pos) => (
+                        <button
+                          key={pos}
+                          type="button"
+                          onClick={() => update(block.uid, writeCaptionPos(block.source, pos))}
+                          className={`rounded-full px-2.5 py-0.5 text-[11px] transition-colors ${
+                            captionPos === pos
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {pos === "top" ? "উপরে" : "নিচে"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {canIcon(block.lang) ? (
+                  <div className="flex items-start gap-2">
+                    <span className="mt-1 w-16 shrink-0 text-[11px] text-muted-foreground">আইকন</span>
+                    <div className="flex flex-wrap gap-1">
+                      {ICONS.map((it) => (
+                        <button
+                          key={it.id}
+                          type="button"
+                          aria-label={it.id}
+                          title={it.id}
+                          onClick={() => update(block.uid, writeIcon(block.source, it.id))}
+                          className={`grid size-7 place-items-center rounded-lg transition-colors ${
+                            icon === it.id
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          <it.Icon className="size-3.5" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             ) : null}
 
@@ -217,13 +327,10 @@ export function BlockCanvas({
                 onChange={(e) => update(block.uid, e.target.value)}
                 spellCheck={false}
                 rows={Math.min(16, Math.max(4, block.source.split("\n").length + 1))}
-                className="mt-2.5 w-full resize-y rounded-xl border bg-muted/40 p-3 font-mono text-[12.5px] leading-relaxed"
+                className="mt-2 w-full resize-y rounded-xl border bg-muted/40 p-3 font-mono text-[12.5px] leading-relaxed"
+                onClick={(e) => e.stopPropagation()}
               />
-            ) : (
-              <div className="mt-2.5 overflow-hidden rounded-xl border bg-card px-3 py-1.5">
-                <Markdown>{blockToMarkdown(block)}</Markdown>
-              </div>
-            )}
+            ) : null}
           </div>
         );
       })}
@@ -251,7 +358,7 @@ function IconBtn({
         e.stopPropagation();
         onClick();
       }}
-      className={`grid size-7 place-items-center rounded-lg border transition-colors ${
+      className={`grid size-7 place-items-center rounded-lg border bg-background shadow-sm transition-colors ${
         danger
           ? "text-destructive hover:bg-destructive/10"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"

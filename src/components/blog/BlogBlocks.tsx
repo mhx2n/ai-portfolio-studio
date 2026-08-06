@@ -1,6 +1,25 @@
 import { useMemo } from "react";
-import { Info, AlertTriangle, CheckCircle2, Lightbulb, Send, Quote, ExternalLink } from "lucide-react";
+import {
+  Info,
+  AlertTriangle,
+  CheckCircle2,
+  Lightbulb,
+  Send,
+  Quote,
+  ExternalLink,
+  Star,
+  Heart,
+  Flame,
+  Rocket,
+  Bell,
+  MapPin,
+  Link as LinkIcon,
+  Download,
+  Play,
+  Sparkle,
+} from "lucide-react";
 import { mediaUrl } from "@/lib/portfolio-types";
+
 
 /** Known custom block languages usable as ```name fences inside post markdown. */
 export const BLOG_BLOCK_LANGS = [
@@ -74,17 +93,21 @@ function embedUrl(url: string): string | null {
 
 function Frame({
   caption,
+  captionPos,
   size,
   children,
 }: {
   caption: string;
+  captionPos: string;
   size: string;
   children: React.ReactNode;
 }) {
+  const cap = caption ? <figcaption className="blog-caption">{caption}</figcaption> : null;
   return (
     <figure className="blog-block" data-size={size}>
+      {captionPos === "top" ? cap : null}
       {children}
-      {caption ? <figcaption className="blog-caption">{caption}</figcaption> : null}
+      {captionPos === "top" ? null : cap}
     </figure>
   );
 }
@@ -96,16 +119,51 @@ const CALLOUT_ICONS: Record<string, typeof Info> = {
   warn: AlertTriangle,
 };
 
+/** Optional decorative icons authors can pick per block. */
+const PICK_ICONS: Record<string, typeof Info> = {
+  info: Info,
+  tip: Lightbulb,
+  success: CheckCircle2,
+  warn: AlertTriangle,
+  star: Star,
+  heart: Heart,
+  flame: Flame,
+  rocket: Rocket,
+  bell: Bell,
+  pin: MapPin,
+  link: LinkIcon,
+  download: Download,
+  play: Play,
+  sparkle: Sparkle,
+};
+
+/** Wraps a block so the author-chosen width (in %) applies to any block type. */
 export function BlogBlock({ lang, source }: { lang: BlockLang; source: string }) {
+  const width = Number(/^[ \t]*width[ \t]*:[ \t]*(\d+)/im.exec(source)?.[1] ?? "100");
+  const w = Number.isFinite(width) ? Math.min(100, Math.max(30, width)) : 100;
+  const inner = <BlockBody lang={lang} source={source} />;
+  if (w >= 100) return inner;
+  return (
+    <div className="blog-width" style={{ width: `${w}%` }}>
+      {inner}
+    </div>
+  );
+}
+
+function BlockBody({ lang, source }: { lang: BlockLang; source: string }) {
   const { get, body } = useMemo(() => parseBlock(source), [source]);
   const caption = get("caption");
   const size = get("size", "full");
   const align = get("align", "left");
+  const captionPos = get("caption_pos", "bottom");
+  const pickedIcon = PICK_ICONS[get("icon").toLowerCase()];
   const Figure = (props: { caption: string; children: React.ReactNode }) => (
-    <Frame caption={props.caption} size={size}>
+    <Frame caption={props.caption} captionPos={captionPos} size={size}>
       {props.children}
     </Frame>
   );
+
+
 
 
   if (lang === "video") {
@@ -166,7 +224,7 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
 
   if (lang === "callout" || lang === "info") {
     const kind = get("type", "info").toLowerCase();
-    const Icon = CALLOUT_ICONS[kind] ?? Info;
+    const Icon = pickedIcon ?? CALLOUT_ICONS[kind] ?? Info;
     const title = get("title");
     return (
       <aside className={`blog-callout blog-callout-${CALLOUT_ICONS[kind] ? kind : "info"}`} data-size={size}>
@@ -181,14 +239,16 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
 
   if (lang === "quote") {
     const author = get("author");
+    const Icon = pickedIcon ?? Quote;
     return (
       <blockquote className="blog-quote" data-size={size}>
-        <Quote className="blog-quote-icon" aria-hidden />
+        <Icon className="blog-quote-icon" aria-hidden />
         <p>{body || get("text")}</p>
         {author ? <cite>— {author}</cite> : null}
       </blockquote>
     );
   }
+
 
   if (lang === "button" || lang === "telegram") {
     const isTg = lang === "telegram";
@@ -204,7 +264,11 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
           target="_blank"
           rel="noopener noreferrer nofollow"
         >
-          {isTg ? <Send className="size-4" aria-hidden /> : <ExternalLink className="size-4" aria-hidden />}
+          {(() => {
+            const Icon = pickedIcon ?? (isTg ? Send : ExternalLink);
+            return <Icon className="size-4" aria-hidden />;
+          })()}
+
           {label}
         </a>
       </p>
@@ -296,13 +360,16 @@ export function BlogBlock({ lang, source }: { lang: BlockLang; source: string })
   if (lang === "banner") {
     const title = get("title") || body;
     if (!title.trim()) return null;
+    const Icon = pickedIcon;
     return (
       <div className={`blog-banner blog-banner-${get("style", "solid")}`} data-size={size} data-align={align}>
+        {Icon ? <Icon className="blog-banner-icon" aria-hidden /> : null}
         <p className="blog-banner-title">{title}</p>
         {get("subtitle") ? <p className="blog-banner-sub">{get("subtitle")}</p> : null}
       </div>
     );
   }
+
 
   if (lang === "divider") {
     return <hr className={`blog-divider blog-divider-${get("style", "line")}`} data-size={size} />;

@@ -694,3 +694,19 @@
 .blog-divider-dotted { border-top-style: dotted; border-top-width: 2px; }
 .blog-divider-thick { border-top-width: 3px; border-top-color: var(--foreground); }
 .blog-spacer { width: 100%; }
+
+/* Author-chosen block width (percent) + optional banner icon. */
+.blog-width {
+  margin-inline: auto;
+  max-width: 100%;
+}
+.blog-banner-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-bottom: 0.4rem;
+  opacity: 0.9;
+}
+.blog-caption + .blog-frame,
+.blog-caption + .blog-gallery {
+  margin-top: 0.55rem;
+}
