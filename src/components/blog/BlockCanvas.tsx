@@ -48,6 +48,7 @@ import {
   writeAlign,
   writeCaption,
   writeCaptionPos,
+  writeCaptionSize,
   writeIcon,
   writeWidth,
   readFloat,
@@ -236,6 +237,7 @@ export function BlockCanvas({
         const icon = readIcon(block.source);
         const caption = readCaption(block.source);
         const captionPos = readCaptionPos(block.source);
+        const captionSize = readCaptionSize(block.source);
         const side = readFloat(block.source);
         const nudgeX = readNudgeX(block.source);
         const nudgeY = readNudgeY(block.source);
