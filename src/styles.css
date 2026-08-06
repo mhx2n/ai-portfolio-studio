@@ -292,6 +292,120 @@
     }
   }
 
+  /* ---- GitHub-style alerts ---- */
+  .blog-alert {
+    --alert-tint: var(--primary);
+    margin: 1.6em 0;
+    border: 1px solid color-mix(in oklab, var(--alert-tint) 35%, var(--border));
+    border-left: 4px solid var(--alert-tint);
+    border-radius: 0.9rem;
+    background: color-mix(in oklab, var(--alert-tint) 7%, transparent);
+    padding: 1rem 1.15rem;
+  }
+  .blog-alert > * + * {
+    margin-top: 0.8em;
+  }
+  .blog-alert > :first-child {
+    margin-top: 0;
+  }
+  .blog-alert h1,
+  .blog-alert h2,
+  .blog-alert h3,
+  .blog-alert h4 {
+    margin-top: 0.2em;
+    font-size: 1.15rem;
+    font-style: normal;
+  }
+  .blog-alert blockquote {
+    border: 0;
+    padding: 0;
+    font-style: normal;
+    color: inherit;
+  }
+  .blog-alert-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--alert-tint);
+  }
+  .blog-alert[data-kind="note"],
+  .blog-alert[data-kind="info"] { --alert-tint: oklch(0.6 0.14 250); }
+  .blog-alert[data-kind="tip"] { --alert-tint: oklch(0.62 0.15 165); }
+  .blog-alert[data-kind="important"] { --alert-tint: oklch(0.58 0.19 300); }
+  .blog-alert[data-kind="warning"],
+  .blog-alert[data-kind="caution"] { --alert-tint: oklch(0.68 0.16 75); }
+  .blog-alert[data-kind="danger"] { --alert-tint: oklch(0.6 0.2 25); }
+  .blog-alert[data-kind="success"] { --alert-tint: oklch(0.62 0.16 150); }
+  .blog-alert[data-kind="quote"] { --alert-tint: oklch(0.55 0.03 260); }
+
+  /* ---- column grid ---- */
+  .blog-cols {
+    display: grid;
+    gap: 0.9rem;
+    margin: 1.6em 0;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .blog-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .blog-cols[data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (min-width: 900px) {
+    .blog-cols[data-cols="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  .blog-col {
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    background: color-mix(in oklab, var(--card) 70%, transparent);
+    padding: 0.95rem 1rem;
+  }
+  .blog-col > * + * {
+    margin-top: 0.6em;
+  }
+  .blog-col h1,
+  .blog-col h2,
+  .blog-col h3,
+  .blog-col h4 {
+    margin-top: 0;
+    font-size: 1.02rem;
+  }
+  .blog-col ul,
+  .blog-col ol {
+    padding-left: 1.1rem;
+  }
+
+  /* ---- FAQ details ---- */
+  .prose-blog details {
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    padding: 0.75rem 1rem;
+    background: color-mix(in oklab, var(--muted) 35%, transparent);
+  }
+  .prose-blog details + details {
+    margin-top: 0.6em;
+  }
+  .prose-blog details > summary {
+    cursor: pointer;
+    font-weight: 650;
+    list-style: none;
+  }
+  .prose-blog details > summary::-webkit-details-marker {
+    display: none;
+  }
+  .prose-blog details > summary::before {
+    content: "+";
+    display: inline-block;
+    width: 1.1em;
+    color: var(--blog-accent, var(--primary));
+    font-weight: 700;
+  }
+  .prose-blog details[open] > summary::before {
+    content: "−";
+  }
+  .prose-blog details > *:not(summary) {
+    margin-top: 0.6em;
+  }
+
 
   .blog-block {
     margin: 1.6em 0;

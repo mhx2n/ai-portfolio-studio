@@ -4,6 +4,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { blogHtmlSchema } from "./html-schema";
 import { colorizeMarkdown } from "@/lib/blog-color";
+import { expandBlogSyntax } from "@/lib/blog-markdown";
 
 /**
  * Inline-ish markdown + safe HTML renderer used for every text slot inside blocks
@@ -37,7 +38,7 @@ export function RichText({
           ),
         }}
       >
-        {colorizeMarkdown(children ?? "")}
+        {colorizeMarkdown(expandBlogSyntax(children ?? ""))}
       </ReactMarkdown>
     </Wrapper>
   );
